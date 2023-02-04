@@ -28,7 +28,6 @@ public abstract class SpotifyBaseRequest<ResponseType, HttpRequestType> extends 
 
     public Response<? extends ResponseType> execute(){
         var httpResponse = this.buildHttpRequest().asObject(this.responseClass);
-        var httpResponseJSON = this.buildHttpRequest().asJson();
         return new Response<>(httpResponse);
     }
 
