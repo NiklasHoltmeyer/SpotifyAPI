@@ -1,77 +1,55 @@
 package de.holtmeyer.niklas.spotify.endpoint.controller;
 
+import de.holtmeyer.niklas.spotify.data.entity.dto.Artists;
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
+import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
 import de.holtmeyer.niklas.spotify.data.service.spotify.user.UserService;
 import de.holtmeyer.niklas.spotify.endpoint.api.UserAPI;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController implements UserAPI<UserProfile> {
     @Autowired @Getter
     UserService userService;
 
-    public Response<? extends UserProfile> get(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                     @PathVariable String user_id) {
-        if(user_id.equals("current")) return getCurrent(accesstoken);
-        userService.getAccessToken().setAccessToken(accesstoken.get());
+    public Response<? extends UserProfile> get(@PathVariable String user_id) {
+        if(user_id.equals("current")) return getCurrent();
         return userService.get(user_id);
     }
-    public Response<? extends UserProfile> getCurrent(@CookieValue(name = "access_token") Optional<String> accesstoken) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
+
+    public Response<? extends UserProfile> getCurrent() {
         return userService.current.getProfile();
     }
 
-    @GetMapping("/top/artists")
-    public String getCurrentUsersProfile(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                         @RequestParam String limit, @RequestParam String offset) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.getTopArtists(limit, offset).toString();
+    public Response<? extends UsersTopArtistsResponse> getCurrentUsersTopArtists(@RequestParam String limit, @RequestParam String offset) {
+        return userService.current.getTopArtists(limit, offset);
     }
 
-    @GetMapping("/following/artists")
-    public String getCurrentUsersFollowedArtists(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                         @RequestParam String limit, @RequestParam String offset) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.getFollowedArtists(limit, offset).toString();
+    public Response<? extends Artists> getCurrentUsersFollowedArtists(@RequestParam String limit, @RequestParam String offset) {
+        return userService.current.getFollowedArtists(limit, offset);
     }
 
-    @GetMapping("/following/artists/{ids}")
-    public String getCurrentUsersFollowedArtists(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                                 @PathVariable String ids) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.isFollowingArtist(ids).toString();
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedArtists(@PathVariable String ids) {
+        return userService.current.isFollowingArtist(ids);
     }
 
-    @GetMapping("/following/artists/")
-    public String getCurrentUsersFollowedArtists(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                                 @RequestBody List<String> ids) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.isFollowingArtist(ids).toString();
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedArtists(@RequestBody List<String> ids) {
+        return userService.current.isFollowingArtist(ids);
     }
 
-    @GetMapping("/following/users/{ids}")
-    public String getCurrentUsersFollowedUsers(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                                 @PathVariable String ids) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.isFollowingUser(ids).toString();
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedUsers(@PathVariable String ids) {
+        return userService.current.isFollowingUser(ids);
     }
 
-    @GetMapping("/following/users/")
-    public String getCurrentUsersFollowedUsers(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                                 @RequestBody List<String> ids) {
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.current.isFollowingUser(ids).toString();
-    }
-
-    @GetMapping("/test")
-    public String test(@CookieValue(name = "access_token") Optional<String> accesstoken){
-        userService.getAccessToken().setAccessToken(accesstoken.get());
-        return userService.followPlaylist("3cEYpjA9oz9GiPac4AsH4n").toString();
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedUsers(@RequestBody List<String> ids) {
+        return userService.current.isFollowingUser(ids);
     }
 }

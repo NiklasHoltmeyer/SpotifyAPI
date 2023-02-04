@@ -3,6 +3,8 @@ package de.holtmeyer.niklas.spotify.endpoint.controller;
 import de.holtmeyer.niklas.spotify.data.entity.dto.Playlist;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.service.spotify.playlist.PlaylistService;
+import de.holtmeyer.niklas.spotify.endpoint.api.PlaylistAPI;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +14,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/playlist", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PlaylistController {
+@Slf4j
+public class PlaylistController implements PlaylistAPI {
     @Autowired
     PlaylistService playlistService;
 
-    @GetMapping("/{playlist_id}")
-    public ResponseEntity<? extends Playlist> getPlaylist(@CookieValue(name = "access_token") Optional<String> accesstoken,
-                                                                    @PathVariable String playlist_id) {
-        playlistService.getAccessToken().setAccessToken(accesstoken.get());
-        return ResponseEntity.ok(playlistService.get(playlist_id).getBody().get());
+    public Response<? extends Playlist> get(@PathVariable String playlist_id) {
+        return playlistService.get(playlist_id);
     }
 }
