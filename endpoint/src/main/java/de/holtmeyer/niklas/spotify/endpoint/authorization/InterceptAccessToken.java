@@ -17,12 +17,18 @@ public class InterceptAccessToken implements HandlerInterceptor {
     AccessToken accessToken;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        setAccessTokenCookie(request);
+
+        return HandlerInterceptor.super.preHandle(request, response, handler);
+    }
+
+    private void setAccessTokenCookie(HttpServletRequest request) {
+        if(request.getCookies() == null) return;
+
         Arrays.stream(request.getCookies())
                 .filter(c -> c.getName().equals("access_token"))
                 .map(Cookie::getValue)
                 .findFirst()
                 .ifPresent(access_token -> this.accessToken.setAccessToken(access_token));
-
-        return HandlerInterceptor.super.preHandle(request, response, handler);
     }
 }

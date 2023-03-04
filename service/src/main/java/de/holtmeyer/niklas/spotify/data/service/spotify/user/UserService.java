@@ -3,6 +3,7 @@ package de.holtmeyer.niklas.spotify.data.service.spotify.user;
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
+import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyDeleteRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
 import lombok.Getter;
@@ -37,9 +38,18 @@ public class UserService {
                 .execute();
     }
 
-    public Response<? extends String> followPlaylist(String playlist_id){
+    public Response followPlaylist(String playlist_id){
         var url = USERS_USER_FOLLOW_PLAYLIST.formatted(playlist_id);
-        return SpotifyPutRequest.<String>builder()
+        return SpotifyPutRequest.builder()
+                .url(url)
+                .apiToken(accessToken)
+                .build()
+                .execute();
+    }
+
+    public Response unfollowPlaylist(String playlist_id){
+        var url = USERS_USER_FOLLOW_PLAYLIST.formatted(playlist_id);
+        return SpotifyDeleteRequest.builder()
                 .url(url)
                 .apiToken(accessToken)
                 .build()

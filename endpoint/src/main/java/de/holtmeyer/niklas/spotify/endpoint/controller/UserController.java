@@ -37,19 +37,54 @@ public class UserController implements UserAPI<UserProfile> {
         return userService.current.getFollowedArtists(limit, offset);
     }
 
-    public Response<? extends List<Boolean>> isCurrentUsersFollowedArtists(@PathVariable String ids) {
-        return userService.current.isFollowingArtist(ids);
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedArtists(@PathVariable String id) {
+        return userService.current.isFollowingArtist(id);
     }
 
     public Response<? extends List<Boolean>> isCurrentUsersFollowedArtists(@RequestBody List<String> ids) {
         return userService.current.isFollowingArtist(ids);
     }
 
-    public Response<? extends List<Boolean>> isCurrentUsersFollowedUsers(@PathVariable String ids) {
-        return userService.current.isFollowingUser(ids);
+    public Response<? extends List<Boolean>> isCurrentUsersFollowedUsers(@PathVariable String id) {
+        return userService.current.isFollowingUser(id);
     }
 
     public Response<? extends List<Boolean>> isCurrentUsersFollowedUsers(@RequestBody List<String> ids) {
         return userService.current.isFollowingUser(ids);
+    }
+
+    @Override //TODO: ungetestet
+    public Response followPlaylist(String id) {
+        return userService.followPlaylist(id);
+    }
+
+    @Override // //TODO: ungetestet
+    public Response unfollowPlaylist(String id) {
+        return userService.unfollowPlaylist(id);
+    }
+
+    @Override
+    public Response followArtists(List<String> ids) {
+        throw new RuntimeException("Unsuported - TODO");
+    }
+
+    @Override
+    public Response followUsers(List<String> ids) {
+        throw new RuntimeException("Unsuported - TODO");
+    }
+
+    @Override
+    public Response unfollowArtists(List<String> ids) {
+        throw new RuntimeException("Unsuported - TODO");
+    }
+
+    @Override
+    public Response unfollowUsers(List<String> ids) {
+        throw new RuntimeException("Unsupported - TODO");
+    }
+
+    @Override
+    public Response demo(@PathVariable String id){
+        return userService.followPlaylist(id);
     }
 }

@@ -8,6 +8,7 @@ import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopTracksRespons
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import de.holtmeyer.niklas.spotify.data.service.common.request.ResponseMapper;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
+import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
 import kong.unirest.JsonNode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,14 @@ public class UserCurrentUserService {
         return isFollowingByType(idsCombined, type);
     }
 
+    private void followPlaylist(String id){
+        var url = String.format(USERS_CURRENT_USER_FOLLOW_PLAYLIST, id);
+        SpotifyPutRequest.<JsonNode>builder().url(url)
+                .apiToken(accessToken)
+                .build()
+                .execute();
+    }
+
     private Response<? extends List<Boolean>> isFollowingByType(String ids, String type) {
         var queryParameter = new HashMap<String, Object>();
 
@@ -115,3 +124,12 @@ public class UserCurrentUserService {
         return queryParameter;
     }
 }
+/*
+* public Response followPlaylist(String ids) {
+public Response unfollowPlaylist(String ids) {
+public Response followArtists(List<String> ids) {
+public Response followUsers(List<String> ids) {
+public Response unfollowArtists(List<String> ids) {
+*
+*
+*  */

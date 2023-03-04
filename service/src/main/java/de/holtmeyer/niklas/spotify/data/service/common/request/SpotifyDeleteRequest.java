@@ -13,12 +13,12 @@ import java.util.Map;
 
 @Getter
 @SuperBuilder
-public class SpotifyPutRequest extends SpotifyBaseRequest<JsonNode, MultipartBody> {
+public class SpotifyDeleteRequest extends SpotifyBaseRequest<JsonNode, MultipartBody> {
     Map<String, Object> payload;
 
     @Override
     HttpRequest<? extends MultipartBody> buildHttpRequest() {
-        var httpRequest = Unirest.put(this.url);
+        var httpRequest = Unirest.delete(this.url);
         if(this.headers != null && !this.headers.isEmpty()){
             httpRequest = httpRequest.headers(this.headers);
         }else{

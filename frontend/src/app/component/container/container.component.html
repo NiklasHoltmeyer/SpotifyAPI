@@ -1,0 +1,19 @@
+
+<div *ngIf="user$ | async as xxx; else loggedOut">
+  <nav class="navbar bg-second header" style="width: 100vw;">
+    <div class="test"></div>
+    <div class="navbar-user my-2 my-lg-0">
+      <img class="header-logo" src="{{ userImage$ | async }}" width="30" height="30" class="d-inline-block align-top" alt="">
+    </div>
+  </nav>
+</div>
+
+<ng-template #loggedOut>
+  <nav class="navbar bg-second header" style="width: 100vw;">
+    <div class="test"></div>
+    <div class="navbar-user my-2 my-lg-0">
+      <button type="button" class="btn btn-success"
+              (click)="login()">Login</button>
+    </div>
+  </nav>
+</ng-template>

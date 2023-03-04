@@ -1,0 +1,27 @@
+$accent-color-first: #1DB954;
+$accent-color-second: #191919;
+$background-color: #000000;
+$foreground-color: #ffffff;
+
+body{
+  background-color: $background-color;
+  color: $foreground-color;
+}
+
+.header-logo{
+    padding: 0.1em;
+    border-radius: 50%;
+}
+
+.bg-first{
+  background: $accent-color-first;
+}
+
+.bg-second{
+  background: $accent-color-second;
+}
+
+
+
+
+
