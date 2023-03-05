@@ -1,0 +1,26 @@
+@import '../../../../../style-paths/variables';
+.user-logo {}
+
+.user-sm {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.user-md {
+    height: 60px;
+    width: 60px;
+    border: 50%;
+    display: inline-block;
+}
+
+.user-name {
+    width: fit-content;
+    padding: 16px;
+}
+
+.user-card {
+    background: $accent-color-second;
+    color: $foreground-color;
+    width: fit-content;
+}

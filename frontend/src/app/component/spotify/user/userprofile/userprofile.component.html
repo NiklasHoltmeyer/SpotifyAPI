@@ -1,0 +1,20 @@
+<div *ngIf="user$ | async as cuser; else loggedOut">
+    <!--  <div *ngIf="{{size == Size}}"/>-->
+    <div [ngSwitch]="size">
+        <div *ngSwitchCase="'small'">
+            <img class="user-logo user-sm d-inline-block align-top" src="{{ userImage$ | async }}" alt="">
+        </div>
+        <div *ngSwitchCase="'medium'">
+            <img class="user-logo user-md d-inline-block align-top" src="{{ userImage$ | async }}" alt="">
+            <div class="user-md user-card">
+                <div class="user-name">{{cuser.display_name}}</div>
+            </div>
+        </div>
+        <div *ngSwitchCase="'large'">TODO</div>
+        <div *ngSwitchDefault>TODO</div>
+    </div>
+</div>
+
+<ng-template #loggedOut>
+    TODO - loggedout UP
+</ng-template>
