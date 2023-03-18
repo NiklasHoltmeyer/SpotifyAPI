@@ -55,12 +55,12 @@ public class UserController implements UserAPI<UserProfile> {
 
     @Override //TODO: ungetestet
     public Response followPlaylist(String id) {
-        return userService.followPlaylist(id);
+        return userService.current.followPlaylist(id);
     }
 
     @Override // //TODO: ungetestet
     public Response unfollowPlaylist(String id) {
-        return userService.unfollowPlaylist(id);
+        return userService.current.unfollowPlaylist(id);
     }
 
     @Override
@@ -85,6 +85,6 @@ public class UserController implements UserAPI<UserProfile> {
 
     @Override
     public Response demo(@PathVariable String id){
-        return userService.followPlaylist(id);
+        return userService.current.followPlaylist(id);
     }
 }

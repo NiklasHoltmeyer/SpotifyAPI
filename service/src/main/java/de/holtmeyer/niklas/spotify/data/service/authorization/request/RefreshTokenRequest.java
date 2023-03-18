@@ -5,7 +5,6 @@ import de.holtmeyer.niklas.spotify.data.service.authorization.response.RequestAc
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPostRequest;
 import de.holtmeyer.niklas.spotify.data.service.configuration.ClientConfiguration;
 import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
-import kong.unirest.HttpResponse;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
@@ -33,7 +32,7 @@ public class RefreshTokenRequest{
         payload.put("grant_type", this.grantType);
 
         return SpotifyPostRequest.<RequestAccessTokenResponse>builder()
-                .url(Endpoint.REQUEST_ACCESS_TOKEN)
+                .url(Endpoint.auth.REQUEST_ACCESS_TOKEN)
                 .responseClass(RequestAccessTokenResponse.class)
                 .contentType(this.contentType)
                 .clientConfiguration(this.clientConfiguration)

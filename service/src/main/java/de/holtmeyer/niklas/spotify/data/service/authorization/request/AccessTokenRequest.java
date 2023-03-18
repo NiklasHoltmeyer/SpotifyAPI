@@ -32,7 +32,7 @@ public class AccessTokenRequest{
         payload.put("grant_type", this.grantType);
 
         return SpotifyPostRequest.<RequestAccessTokenResponse>builder()
-                .url(Endpoint.REQUEST_ACCESS_TOKEN)
+                .url(Endpoint.auth.REQUEST_ACCESS_TOKEN)
                 .responseClass(RequestAccessTokenResponse.class)
                 .contentType(this.contentType)
                 .clientConfiguration(this.clientConfiguration)

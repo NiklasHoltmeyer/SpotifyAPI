@@ -2,7 +2,6 @@ package de.holtmeyer.niklas.spotify.data.service.authorization.request;
 
 import de.holtmeyer.niklas.spotify.data.service.configuration.ClientConfiguration;
 import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
-import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -28,7 +27,7 @@ public class RequestAuthorizationRequest {
         Optional<String> scopeEncoded = this.encode(clientConfiguration.getSCOPE());
         this.scope = scopeEncoded;
 
-        this.url = Endpoint.REQUEST_AUTH_CODE;
+        this.url = Endpoint.auth.REQUEST_AUTH_CODE;
         this.response_type = "code";
         this.client_id = clientConfiguration.getID();
         this.redirect_uri = clientConfiguration.getREDIRECT_URI();

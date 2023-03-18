@@ -23,7 +23,12 @@ public class Application {
     private void setSecrets() {
         @NonNull var CLIENT_ID = env.getProperty("CLIENT_ID");
         @NonNull var CLIENT_SECRET = env.getProperty("CLIENT_SECRET");
+        @NonNull var REDIRECT_URI = env.getProperty("REDIRECT_URI");
+        @NonNull var SCOPE = env.getProperty("SCOPE");
+
         clientConfiguration.setID(CLIENT_ID);
         clientConfiguration.setSECRET(CLIENT_SECRET);
+        clientConfiguration.setREDIRECT_URI(REDIRECT_URI);
+        clientConfiguration.setSCOPE(SCOPE);
     }
 }

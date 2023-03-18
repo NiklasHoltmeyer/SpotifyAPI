@@ -7,8 +7,10 @@ import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsRespon
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopTracksResponse;
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import de.holtmeyer.niklas.spotify.data.service.common.request.ResponseMapper;
+import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyDeleteRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
+import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
 import kong.unirest.JsonNode;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-
-import static de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint.*;
-import static de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint.USERS_CURRENT_USERS_FOLLOWED_ARTISTS;
 
 @Service
 public class UserCurrentUserService {
@@ -28,7 +27,7 @@ public class UserCurrentUserService {
 
     public Response<? extends UserProfile> getProfile(){
         return SpotifyGetRequest.<UserProfile>builder()
-                .url(USERS_CURRENT_USERS_PROFILE)
+                .url(Endpoint.user.current.ME)
                 .responseClass(UserProfile.class)
                 .apiToken(accessToken)
                 .build()
@@ -39,7 +38,7 @@ public class UserCurrentUserService {
         var queryParameter = buildTopResponseQueryParameter(limit, offset);
 
         return SpotifyGetRequest.<UsersTopArtistsResponse>builder()
-                .url(USERS_CURRENT_USERS_TOP_ARTISTS)
+                .url(Endpoint.user.current.TOP_ARTISTS)
                 .responseClass(UsersTopArtistsResponse.class)
                 .apiToken(accessToken)
                 .queryParameter(queryParameter)
@@ -51,7 +50,7 @@ public class UserCurrentUserService {
         var queryParameter = buildTopResponseQueryParameter(limit, offset);
 
         return SpotifyGetRequest.<UsersTopTracksResponse>builder()
-                .url(USERS_CURRENT_USERS_TOP_TRACKS)
+                .url(Endpoint.user.current.TOP_TRACKS)
                 .responseClass(UsersTopTracksResponse.class)
                 .apiToken(accessToken)
                 .queryParameter(queryParameter)
@@ -62,7 +61,7 @@ public class UserCurrentUserService {
         var queryParameter = buildTopResponseQueryParameter(limit, offset);
 
         return SpotifyGetRequest.<Artists>builder()
-                .url(USERS_CURRENT_USERS_FOLLOWED_ARTISTS)
+                .url(Endpoint.user.current.FOLLOWED_ARTISTS)
                 .responseClass(Artists.class)
                 .apiToken(accessToken)
                 .queryParameter(queryParameter)
@@ -72,28 +71,32 @@ public class UserCurrentUserService {
     public Response<? extends List<Boolean>> isFollowingArtist(List<String> ids){
         return isFollowingByType(ids, "artist");
     }
-
     public Response<? extends List<Boolean>> isFollowingUser(List<String> ids){
         return isFollowingByType(ids, "user");
     }
-
     public Response<? extends List<Boolean>> isFollowingArtist(String ids){
         return isFollowingByType(ids, "artist");
     }
-
     public Response<? extends List<Boolean>> isFollowingUser(String ids){
         return isFollowingByType(ids, "user");
     }
-
     private Response<? extends List<Boolean>> isFollowingByType(List<String> ids, String type) {
         String idsCombined = String.join(",", ids);
 
         return isFollowingByType(idsCombined, type);
     }
-
-    private void followPlaylist(String id){
-        var url = String.format(USERS_CURRENT_USER_FOLLOW_PLAYLIST, id);
-        SpotifyPutRequest.<JsonNode>builder().url(url)
+    public Response followPlaylist(String playlist_id){
+        var url = Endpoint.user.current.FOLLOW_PLAYLIST.formatted(playlist_id);
+        return SpotifyPutRequest.builder()
+                .url(url)
+                .apiToken(accessToken)
+                .build()
+                .execute();
+    }
+    public Response unfollowPlaylist(String playlist_id){
+        var url = Endpoint.user.current.FOLLOW_PLAYLIST.formatted(playlist_id);
+        return SpotifyDeleteRequest.builder()
+                .url(url)
                 .apiToken(accessToken)
                 .build()
                 .execute();
@@ -107,13 +110,12 @@ public class UserCurrentUserService {
 
         ResponseMapper<JsonNode, List<Boolean>> mapper = (jsonResponse) -> jsonResponse.getBody().getArray().toList();
         return (Response<? extends List<Boolean>>)SpotifyGetRequest.<JsonNode>builder()
-                .url(USERS_CURRENT_CHECK_IF_USER_FOLLOWS_ARTISTS_OR_USERS)
+                .url(Endpoint.user.current.FOLLOWS_ARTISTS_OR_USERS)
                 .apiToken(accessToken)
                 .queryParameter(queryParameter)
                 .build()
                 .execute(mapper);
     }
-
     private HashMap<String, Object> buildTopResponseQueryParameter(String limit, String offset){
         var queryParameter = new HashMap<String, Object>();
 
@@ -124,12 +126,3 @@ public class UserCurrentUserService {
         return queryParameter;
     }
 }
-/*
-* public Response followPlaylist(String ids) {
-public Response unfollowPlaylist(String ids) {
-public Response followArtists(List<String> ids) {
-public Response followUsers(List<String> ids) {
-public Response unfollowArtists(List<String> ids) {
-*
-*
-*  */

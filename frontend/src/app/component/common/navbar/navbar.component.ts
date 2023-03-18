@@ -29,6 +29,6 @@ export class NavbarComponent implements OnInit {
   }
 
   ondropClick(id: String) {
-    this.userdropdown?.dropdown('toggle');
+//     this.userdropdown?.dropdown('toggle');
   }
 }
