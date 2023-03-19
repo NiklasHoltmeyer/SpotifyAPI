@@ -31,14 +31,14 @@ public class ResponseConverterAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(final Response body, final MethodParameter returnType, final MediaType selectedContentType,
                                   final Class<? extends HttpMessageConverter<?>> selectedConverterType, final ServerHttpRequest request,
                                   final ServerHttpResponse response) {
+        if(body.isSuccess()){
+            return body.getBody().get();
+        }
+
         var statusCode = body.getHttpResponse().getStatus();
         var errorMessage = body.getHttpResponse().getStatusText();
         response.setStatusCode(HttpStatusCode.valueOf(statusCode));
 
-        if(body.isSuccess()){
-            return body.getBody().get();
-        }
-        
         return ResponseEntity.badRequest().body(errorMessage).getBody();
     }
 }

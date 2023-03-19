@@ -22,8 +22,8 @@ public class ResponseReduced<T extends Pageable, I> extends Response<List<I>> {
             body = items;
         }
 
-        this.body = Optional.ofNullable(body);
-        this.success = this.body.isPresent();
+        this.setBody(Optional.ofNullable(body));
+        this.setSuccess(this.body.isPresent());
     }
 
     @SuppressWarnings("unchecked")

@@ -4,8 +4,12 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHref;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.BasePlaylist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrackInfo;
+import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
+import de.holtmeyer.niklas.spotify.data.entity.dto.track.UserSavedTrack;
+import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.service.spotify.playlist.PlaylistService;
 import de.holtmeyer.niklas.spotify.data.service.spotify.search.SearchService;
+import de.holtmeyer.niklas.spotify.data.service.spotify.track.TrackService;
 import de.holtmeyer.niklas.spotify.endpoint.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 public class DevController {
@@ -26,6 +31,9 @@ public class DevController {
     SearchService searchService;
     @Autowired
     PlaylistService playlistService;
+
+    @Autowired
+    TrackService trackService;
 
     @GetMapping("/dev/wombocombo")
     public Object wombocombo(){
@@ -60,9 +68,10 @@ public class DevController {
                 .toList();
 
         printTimeStamp(WUMBOPlayListIDs);
-
+        var wombooo = this.currentAndPlaylistSongs();
         var allSongUris = WUMBOPlayListIDs.stream().map(id -> listAllTrackURIs(id, false))
                 .flatMap(Collection::stream)
+                .filter(x->!wombooo.contains(x.getUri()))
                 .distinct()
                 .collect(Collectors.toList());
         printTimeStamp(allSongUris);
@@ -156,5 +165,32 @@ public class DevController {
     public static void printTimeStamp(Collection c) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         System.out.println(timestamp + " " + c.size());
+    }
+    List<String> currentAndPlaylistSongs(){
+        // Fav Songs + MEINE Playlisten
+        var savedTracks = this.trackService.getCurrentSaveTracks().getBody().get().stream()
+                .map(UserSavedTrack::getTrack)
+                .map(HasHref::getUri)
+                .toList();
+        var excludePlaylists = List.of("Low Orbit Ion Cannon", "WUMBO");
+        var playlistTracks = this.playlistService
+                .getCurrentUserPlaylists()
+                .getBody()
+                .get()
+                .stream()
+                .filter(x->!x.getOwner().getId().equals("kngholdy"))
+                .filter(x->!excludePlaylists.contains(x.getName()))
+                .map(HasHrefWithID::getId)
+                .distinct()
+                .map(playlist_id->this.listAllTrackURIs(playlist_id, false))
+                .flatMap(Collection::stream)
+                .distinct()
+                .map(HasHref::getUri)
+                .toList();
+
+        return Stream.of(savedTracks, playlistTracks)
+                .flatMap(Collection::stream)
+                .distinct()
+                .toList();
     }
 }

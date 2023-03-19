@@ -32,7 +32,7 @@ public class Response<T> {
     }
 
     public boolean isSuccess(){
-        if(success!=null) return success;
+        if(this.success!=null) return this.success;
         return httpResponse.getStatus() >= 200 && httpResponse.getStatus() < 300;
     }
 }
