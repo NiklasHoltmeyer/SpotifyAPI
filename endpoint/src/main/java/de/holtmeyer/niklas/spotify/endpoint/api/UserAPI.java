@@ -39,6 +39,4 @@ public interface UserAPI<T> {
     Response unfollowArtists(@RequestBody List<String> ids);
     @DeleteMapping("/me/users")
     Response unfollowUsers(@RequestBody List<String> ids);
-    @GetMapping("/demo/{id}")
-    Response demo(@PathVariable String id);
 }

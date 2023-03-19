@@ -16,6 +16,9 @@ public interface PlaylistAPI {
     @GetMapping("/{user_id}/playlists")
     Response getUserPlaylists(@PathVariable String user_id);
 
+    @GetMapping("/me")
+    Response getCurrentUserPlaylists();
+
     @PutMapping("/{playlist_id}")
     Response putDetails(@RequestBody PlaylistDetails playlistDetails);
 

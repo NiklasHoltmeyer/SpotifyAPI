@@ -1,7 +1,7 @@
 package de.holtmeyer.niklas.spotify.endpoint.controller;
 
-import de.holtmeyer.niklas.spotify.data.entity.dto.Artists;
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
+import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.Artists;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
 import de.holtmeyer.niklas.spotify.data.service.spotify.user.UserService;
@@ -81,10 +81,5 @@ public class UserController implements UserAPI<UserProfile> {
     @Override
     public Response unfollowUsers(List<String> ids) {
         throw new RuntimeException("Unsupported - TODO");
-    }
-
-    @Override
-    public Response demo(@PathVariable String id){
-        return userService.current.followPlaylist(id);
     }
 }

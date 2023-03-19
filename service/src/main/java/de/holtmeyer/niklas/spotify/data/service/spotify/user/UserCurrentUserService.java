@@ -1,7 +1,9 @@
 package de.holtmeyer.niklas.spotify.data.service.spotify.user;
 
-import de.holtmeyer.niklas.spotify.data.entity.dto.Artists;
+import de.holtmeyer.niklas.spotify.data.entity.dto.Artist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Pageable;
+import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.Artists;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopTracksResponse;
@@ -87,9 +89,10 @@ public class UserCurrentUserService {
     }
     public Response followPlaylist(String playlist_id){
         var url = Endpoint.user.current.FOLLOW_PLAYLIST.formatted(playlist_id);
-        return SpotifyPutRequest.builder()
+        return SpotifyPutRequest.<JsonNode>builder()
                 .url(url)
                 .apiToken(accessToken)
+                .responseClass(JsonNode.class)
                 .build()
                 .execute();
     }

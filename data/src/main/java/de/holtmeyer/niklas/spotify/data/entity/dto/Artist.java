@@ -1,17 +1,18 @@
 package de.holtmeyer.niklas.spotify.data.entity.dto;
 
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.ExternalUrls;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Image;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Artist {
+@EqualsAndHashCode(callSuper=true)
+public class Artist extends HasHrefWithID {
     ExternalUrls external_urls;
     Followers followers;
     String[] genres;
-    String href;
-    String id;
     Image[] images;
     String name;
     Integer popularity;
-    String type;
-    String uri;
 }

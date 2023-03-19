@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.entity.dto;
+package de.holtmeyer.niklas.spotify.data.entity.dto.common;
 import lombok.Data;
 
 @Data

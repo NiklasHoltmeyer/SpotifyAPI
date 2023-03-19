@@ -19,7 +19,19 @@ public class ApiExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId()))
         );
-        return new ResponseEntity<>(apiRequestException,
-                HttpStatusCode.valueOf(HttpStatus.BAD_REQUEST));
+
+        return ResponseEntity.badRequest().body(apiRequestException);
+    }
+
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException exception){
+        var apiRequestException = new ApiException(
+                exception.getMessage(),
+                exception,
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId()))
+        );
+
+        return new ResponseEntity<>(apiRequestException, HttpStatusCode.valueOf(404));
     }
 }

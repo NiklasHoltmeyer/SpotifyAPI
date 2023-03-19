@@ -1,5 +1,8 @@
 package de.holtmeyer.niklas.spotify.data.entity.dto;
 
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.ExternalUrls;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Image;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Reason;
 import lombok.Data;
 
 @Data
@@ -23,6 +26,6 @@ public class Episode {
     EpisodeResumePoint resume_point;
     String type;
     String uri;
-    Restrictions restrictions;
+    Reason restrictions;
     Show show;
 }

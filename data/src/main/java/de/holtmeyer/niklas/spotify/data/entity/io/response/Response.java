@@ -1,11 +1,16 @@
 package de.holtmeyer.niklas.spotify.data.entity.io.response;
 
+import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.PlaylistTrackInfos;
 import kong.unirest.HttpResponse;
+import kong.unirest.PagedList;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
-@Data
+@Data @NoArgsConstructor(access=AccessLevel.PACKAGE)
 public class Response<T> {
     Optional<T> body;
     Boolean success;

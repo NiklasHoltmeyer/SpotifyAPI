@@ -13,17 +13,19 @@ import java.util.Map;
 
 @Getter
 @SuperBuilder
-public class SpotifyDeleteRequest extends SpotifyBaseRequest<JsonNode, MultipartBody> {
+public class SpotifyDeleteRequest<T> extends SpotifyBaseRequest<T, MultipartBody> {
     Map<String, Object> payload;
+    Object body;
 
     @Override
-    HttpRequest<? extends MultipartBody> buildHttpRequest() {
+    HttpRequest buildHttpRequest() {
         var httpRequest = Unirest.delete(this.url);
-        if(this.headers != null && !this.headers.isEmpty()){
-            httpRequest = httpRequest.headers(this.headers);
-        }else{
+
+        if(this.headers == null || this.headers.isEmpty()){
             this.addAuthorizationHeaderBearer(apiToken.getAccessToken());
         }
+
+        httpRequest = httpRequest.headers(this.headers);
 
         if(this.queryParameter != null && !this.queryParameter.isEmpty()){
             httpRequest = httpRequest.queryString(this.queryParameter);
@@ -33,12 +35,10 @@ public class SpotifyDeleteRequest extends SpotifyBaseRequest<JsonNode, Multipart
             this.payload = new HashMap<>();
         }
 
-        return httpRequest.fields(this.payload);
-    }
+        if(this.body != null){
+            return httpRequest.body(this.body);
+        }
 
-    @Override
-    public Response<? extends JsonNode> execute(){
-        var httpResponse = this.buildHttpRequest().asJson();
-        return new Response<JsonNode>(httpResponse);
+        return httpRequest.fields(this.payload);
     }
 }

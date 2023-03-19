@@ -3,6 +3,7 @@ package de.holtmeyer.niklas.spotify.data.entity.dto;
 public enum SearchType {
     //Query/Search Type as used in: https://developer.spotify.com/documentation/web-api/reference/#/operations/search
     ALBUM("album"),
+    PLAYLIST("playlist"),
     TRACK("track");
 
     final String type;

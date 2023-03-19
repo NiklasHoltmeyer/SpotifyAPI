@@ -29,6 +29,11 @@ public class PlaylistController implements PlaylistAPI {
     }
 
     @Override
+    public Response getCurrentUserPlaylists() {
+        return playlistService.getCurrentUserPlaylists();
+    }
+
+    @Override
     public Response putDetails(PlaylistDetails playlistDetails) {
         throw new RuntimeException("Unsuported - TODO");
     }
@@ -50,7 +55,7 @@ public class PlaylistController implements PlaylistAPI {
 
     @Override
     public Response create(String playlist_id, PlaylistDetails playlistDetails) {
-        return null;
+        throw new RuntimeException("Unsuported - TODO");
     }
 
     @Override

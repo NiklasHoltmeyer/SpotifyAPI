@@ -1,10 +1,13 @@
 package de.holtmeyer.niklas.spotify.data.entity.dto;
 
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.ExternalUrls;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Image;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.Name;
 import lombok.Data;
 
 @Data
 public class Audiobook {
-    Author[] authors;
+    Name[] authors;
     String[] available_markets;
     Copyright[] copyrights;
     String description;
@@ -22,5 +25,5 @@ public class Audiobook {
     String type;
     String uri;
     Integer total_chapters;
-    Chapter chapters;
+    Object chapters; //TODO
 }
