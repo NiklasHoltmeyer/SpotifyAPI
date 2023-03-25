@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class ResponseReduced<T extends Pageable, I> extends Response<List<I>> {
-    public ResponseReduced(ResponseList<? extends T> responseList) {
+public class PagableResponseReduced<T extends Pageable, I> extends Response<List<I>> {
+    public PagableResponseReduced(ResponseList<? extends T> responseList) { // List<Response>
         var items = responseList
                 .getBody()
                 .stream()
@@ -33,6 +33,4 @@ public class ResponseReduced<T extends Pageable, I> extends Response<List<I>> {
         }
         throw new RuntimeException("TODO 87645");
     }
-
-
 }

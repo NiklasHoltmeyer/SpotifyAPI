@@ -11,4 +11,6 @@ public class Endpoint {
     public static PlaylistEndpoint playlist = new PlaylistEndpoint();
     public static TrackEndpoint endpoint = new TrackEndpoint();
     public static SearchEndpoint search = new SearchEndpoint();
+
+    public static ArtistEndpoint artist = new ArtistEndpoint();
 }
