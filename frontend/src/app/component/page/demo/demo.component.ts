@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserProfile } from '../../../interface/UserProfile';
-import { Followers } from '../../../interface/Followers';
-import { Image } from '../../../interface/Image';
-import { ExplicitContent } from '../../../interface/ExplicitContent';
+import { ExplicitContent, UserProfile, Followers, Image } from '../../../interface/generate_entities.d';
 import { Observable, of, empty} from 'rxjs';
 import { UserService } from '../../../service/spotify/user.service';
 
