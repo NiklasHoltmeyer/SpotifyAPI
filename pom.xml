@@ -22,6 +22,7 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>17</java.version>
+<!--        <maven.compiler.release>19</maven.compiler.release>-->
     </properties>
     <dependencies>
         <dependency>
@@ -50,4 +51,30 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>cz.habarta.typescript-generator</groupId>
+                <artifactId>typescript-generator-maven-plugin</artifactId>
+                <version>3.2.1263</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-classes</phase> <!-- mvn -pl data  process-classes -->
+                    </execution>
+                </executions>
+                <configuration>
+                    <jsonLibrary>jackson2</jsonLibrary>
+                    <classPatterns>de.holtmeyer.niklas.spotify.data.entity.**</classPatterns>
+                    <excludeClassPatterns>javax.**</excludeClassPatterns>
+                    <outputFile>../frontend/src/app/interface/generate_entities.d.ts</outputFile>
+                    <outputKind>module</outputKind>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

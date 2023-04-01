@@ -1,6 +1,5 @@
 package de.holtmeyer.niklas.spotify.data.entity.io.response;
 
-import de.holtmeyer.niklas.spotify.data.entity.dto.artist.ArtistArtists;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
