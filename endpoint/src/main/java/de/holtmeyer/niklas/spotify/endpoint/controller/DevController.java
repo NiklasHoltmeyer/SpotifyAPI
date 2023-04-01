@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -89,13 +90,67 @@ public class DevController {
                 .distinct()
                 .collect(Collectors.toList());
 
-        if(shuffle){
+        if(false){ //sort alg
             Collections.shuffle(allSongUris);
             //((PlaylistTrack) allSongUris.get(0)).getPopularity()
         }else{
             // generell filter überlgen
             allSongUris.sort(Comparator.comparing(PlaylistTrack::getPopularity).reversed());
         }
+
+//        this.sortByArtistPopularity(allSongUris);
+
+        this.playlistAPI.addTracks(playlist_dst_id, allSongUris);
+
+        return "WUMBO";
+    }
+
+    @GetMapping("/dev/wombo2combo")
+    public Object wombocombo2(){
+        boolean shuffle = false;
+        List<String> trio = List.of("kngholdy", "Kutay Gündogan", "Ali Emngl");
+        List<String> ohneSpoti = List.of("Spotify");
+        String dst = "Low Orbit Ion Cannon - Minus";
+        String playlist_dst_id = findPlayListByName(dst);
+
+        this.playlistService.deleteAllTracks(playlist_dst_id);
+
+        var playlistsCurrentUserFollows = this.playlistAPI
+                .getCurrentUserPlaylists()
+                .getBody()
+                .get();
+
+        var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
+                .stream()
+                .map(BasePlaylist::getOwner)
+                .filter(x->!ohneSpoti.contains(x.getDisplay_name()))
+                .map(HasHrefWithID::getId)
+                .distinct()
+                .toList();
+
+        var WUMBOPlayListIDs = userIDsOfPlaylistsCurrentUserFollows.stream()
+                .map(user_id -> this.playlistAPI.getUserPlaylists(user_id))
+                .map(response -> response.getBody().get())
+                .map(Arrays::asList)
+                .flatMap(Collection::stream)
+                .flatMap(Collection::stream)
+                .map(HasHrefWithID::getId)
+                .distinct()
+                .toList();
+
+        var wombooo = this.currentAndPlaylistSongs();
+
+        var allSongUris = WUMBOPlayListIDs.parallelStream()
+                .map(this.playlistService::listTracks)
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .filter(x->!wombooo.contains(x.getUri()))
+                .filter(filterByAge(14))
+                .distinct()
+                .collect(Collectors.toList());
+
+        this.sortByArtistPopularity(allSongUris);
+        allSongUris.sort(Comparator.comparing(PlaylistTrack::getPopularity).reversed());
 
         this.playlistAPI.addTracks(playlist_dst_id, allSongUris);
 
@@ -120,6 +175,14 @@ public class DevController {
         return "wupdi";
     }
 
+    @GetMapping("/dev/all")
+    public String t(){
+        wombocombo();
+        wombocombo2();
+        politik();
+        return "all";
+    }
+
     public void shuffle(String playlist_src, String playlist_dst){
         String playlist_src_id = findPlayListByName(playlist_src);
         String playlist_dst_id = findPlayListByName(playlist_dst);
@@ -129,23 +192,13 @@ public class DevController {
     }
 
     public void sortByPopularity(List<String> playlist_srcs, String playlist_dst){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var now = LocalDate.parse(LocalDate.now().toString(), formatter);
-
         var trackURIs = playlist_srcs.stream()
                 .map(this::findPlayListByName)
                 .map(this.playlistService::listTracks)
                 .flatMap(Collection::stream)
                 .distinct()
                 .filter(Objects::nonNull)
-                .filter(
-                        track -> {
-                            var releaseDate = track.getAlbum().getRelease_date();
-                            LocalDate releaseDateTime = LocalDate.parse(releaseDate, formatter);
-                            var ageInDays = now.toEpochDay() - releaseDateTime.toEpochDay();
-                            return ageInDays < 14;
-                        }
-                )
+                .filter(filterByAge(14))
                 .collect(Collectors.toList());
 
         // tracks.get(0).getAlbum().getRelease_date()
@@ -162,6 +215,26 @@ public class DevController {
         this.playlistService.api.addTracks(playlist_dst_id, trackURIs);
     }
 
+    private static Predicate<PlaylistTrack> filterByAge(int maxAgeInDays) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        var now = LocalDate.parse(LocalDate.now().toString(), formatter);
+
+        return track -> {
+            try{
+                var releaseDate = track.getAlbum().getRelease_date();
+                LocalDate releaseDateTime = LocalDate.parse(releaseDate, formatter);
+                var ageInDays = now.toEpochDay() - releaseDateTime.toEpochDay();
+                return ageInDays < maxAgeInDays;
+            }catch(Exception e){
+                // yyyy -> 2009
+                // yyyy-mm -> 1974-11
+//                System.out.println("DATE: " + track.getAlbum().getRelease_date());
+                return false;
+            }
+
+        };
+    }
+
     public void sortByArtistPopularity(List<PlaylistTrack> tracks){
         var artistsIDs = tracks.stream()
                 .map(PlaylistTrack::getArtists)
@@ -174,10 +247,10 @@ public class DevController {
         var artistPopularity = artistAPI.get(artistsIDs)
                 .getBody().get()
                 .stream()
-                .collect(Collectors.toMap(Artist::getName, Artist::getPopularity));
+                .collect(Collectors.toMap(HasHrefWithID::getId, Artist::getPopularity));
 
         Function<PlaylistTrack, Double> calcPopularity = (track) -> Stream.of(track.getArtists())
-                    .map(Artist::getName)
+                    .map(HasHrefWithID::getId)
                     .mapToDouble(artistPopularity::get)
                     .average()
                     .orElseThrow(() -> new RuntimeException("todo"));
