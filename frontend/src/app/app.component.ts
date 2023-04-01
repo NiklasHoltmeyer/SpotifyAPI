@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlbumService } from './service/spotify/album.service';
-import { UserProfile } from './interface/UserProfile';
+import { UserProfile } from './interface/generate_entities';
 import { Observable, of, empty} from 'rxjs';
 
 @Component({

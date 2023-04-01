@@ -1,0 +1,28 @@
+<div *ngIf="playlist$ | async as playlist; else loggedOut" class="playlist-container">
+  <div [ngSwitch]="size">
+    <div *ngSwitchCase="'small'">
+      <img class="playlist-logo playlist-sm d-inline-block align-top" src="{{ playlist.images[0].url }}" alt="">
+    </div>
+    <div *ngSwitchCase="'md'">
+      <img class="playlist-logo playlist-md d-inline-block align-top" src="{{ playlist.images[0].url }}" alt="" class="playlist-image">
+      <div class="playlist-md playlist-card">
+        <div class="playlist-name">
+          <a href="{{playlist.external_urls.spotify}}" class="playlist-link">{{playlist.name}}</a>
+          <i class="bi bi-people-fill" *ngIf="playlist.collaborative"></i>
+          <i class="bi bi-globe-americas" *ngIf="playlist.public"></i>
+        </div>
+        <div class="playlist-description">{{playlist.description}}</div>
+        <div class="playlist-footer" style="display: inline-flex;">
+          <ul>
+            <li>{{playlist.tracks.total}}</li>
+            <li><a class="playlist-link" href="{{playlist.owner.external_urls.spotify}}">{{playlist.owner.display_name}}</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loggedOut>
+  TODO - playlist Else
+</ng-template>

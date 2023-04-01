@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { UserService } from '../../../service/spotify/user.service';
-import { UserProfile } from '../../../interface/UserProfile';
+import { UserProfile } from '../../../interface/generate_entities';
 import { Observable, of, empty} from 'rxjs';
 
 @Component({

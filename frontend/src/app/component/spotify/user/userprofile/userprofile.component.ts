@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { UserProfile } from '../../../../interface/UserProfile';
+import { UserProfile } from '../../../../interface/generate_entities';
 import { Observable, of, empty} from 'rxjs';
 
 @Component({

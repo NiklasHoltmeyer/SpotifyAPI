@@ -1,1 +1,10 @@
 <userprofile [user$]="user$" size="medium"></userprofile>
+
+<div style="margin-top: 25px; position: absolute;">
+  <div *ngFor="let playlist of playlistsCurrentUser$ | async; index as i" class="playlist-wrapper">
+    <playlist [playlist]="playlist"></playlist>
+  </div>
+</div>
+
+
+

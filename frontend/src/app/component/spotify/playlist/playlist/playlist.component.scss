@@ -1,0 +1,75 @@
+@import '../../../../../style-paths/variables';
+
+.playlist-logo {}
+
+.playlist-sm {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+}
+
+.playlist-container{
+  width: 350px;
+  height: 120px;
+}
+
+.playlist-image{
+  width: 120px;
+  height: 120px;
+  float: left;
+}
+
+.playlist-card {
+  height: 120px;
+  background: $accent-color-second;
+  color: $foreground-color;
+
+  padding: 8px 16px 8px 16px;
+
+  overflow: hidden;
+}
+.playlist-card > .playlist-name, .playlist-card > .playlist-description, .playlist-card > .playlist-footer{
+  width: 100%;
+}
+
+.playlist-name{
+  height: 32px;
+  font-size: x-large;
+  overflow: hidden;
+}
+
+.playlist-name > i {
+  padding-left: 4px;
+  vertical-align: text-bottom;
+}
+
+.playlist-card > .playlist-description{
+  height: 56px;
+  font-size: small;
+  text-align: justify;
+  overflow: hidden;
+}
+
+.playlist-card > .playlist-footer{
+  height: 16px;
+  font-size: x-small;
+}
+
+.playlist-footer > ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.playlist-footer > ul > li{
+  float: left;
+  display: block;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.playlist-link{
+  color: unset !important;
+  text-decoration: unset !important;
+}

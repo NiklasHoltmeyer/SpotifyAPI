@@ -10,6 +10,7 @@ import { DemoComponent } from './component/page/demo/demo.component';
 import { NavbarComponent } from './component/common/navbar/navbar.component';
 import { FooterComponent } from './component/common/footer/footer.component';
 import { UserComponent } from './component/page/user/user.component';
+import { PlaylistComponent } from './component/spotify/playlist/playlist/playlist.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { UserComponent } from './component/page/user/user.component';
     DemoComponent,
     NavbarComponent,
     FooterComponent,
-    UserComponent
+    UserComponent,
+    PlaylistComponent
   ],
   imports: [
     BrowserModule,
