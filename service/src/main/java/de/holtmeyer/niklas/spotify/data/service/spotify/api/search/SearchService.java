@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.search;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.search;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.SearchResult;
 import de.holtmeyer.niklas.spotify.data.entity.dto.SearchType;

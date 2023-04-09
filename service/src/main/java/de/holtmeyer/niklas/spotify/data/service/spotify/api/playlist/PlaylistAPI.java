@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.playlist;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Playlist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHref;
@@ -8,6 +8,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.PlaylistTrackInfos;
 import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.PlaylistsWithMinimalTrackInfos;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrackInfo;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
+import de.holtmeyer.niklas.spotify.data.entity.io.request.PlaylistDetailsRequestBody;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.TrackDeleteRequestBody;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.TrackReorderRequestBody;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.UrisRequestBody;
@@ -151,14 +152,24 @@ public class PlaylistAPI {
      * -> TODO replace nicht impl!
      * reorder funkt nicht? oder ich verstehe doku falsch
      */
-    public Response reorderTracks(String playlist_id, String snapshot_id, int range_start, int insert_before, int range_length){
+    public Response reorderTracks(String playlist_id, TrackReorderRequestBody body){
         var url = PlaylistEndpoint.UPDATE_TRACKS.formatted(playlist_id);
-
-        var body = new TrackReorderRequestBody(snapshot_id, range_start, insert_before, range_length);
 
         return SpotifyPutRequest.<Snapshot>builder()
                 .url(url)
                 .responseClass(Snapshot.class)
+                .apiToken(accessToken)
+                .body(body)
+                .build()
+                .execute();
+    }
+
+    public Response setDetails(String playlist_id, PlaylistDetailsRequestBody body){
+        var url = PlaylistEndpoint.BY_ID.formatted(playlist_id);
+
+        return SpotifyPutRequest.builder()
+                .url(url)
+                .responseClass(kong.unirest.Empty.class)
                 .apiToken(accessToken)
                 .body(body)
                 .build()

@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.track;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.track;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

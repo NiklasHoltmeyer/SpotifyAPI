@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.playlist;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PlaylistService {
@@ -18,8 +19,7 @@ public class PlaylistService {
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(x->x.getTrack())// Methode Reference does not work sadly
-//                .map(HasHref.class::cast)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public void deleteAllTracks(String playlist_id){

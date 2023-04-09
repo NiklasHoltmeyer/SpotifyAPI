@@ -1,9 +1,15 @@
 package de.holtmeyer.niklas.spotify.data.service.common.util;
 
+import lombok.Builder;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 public class ListUtil<T> {
     public static <T> Stream<List<T>> batches(List<T> source, int length) {
         //https://stackoverflow.com/a/30072617

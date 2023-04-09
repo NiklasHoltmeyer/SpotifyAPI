@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.user;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.user;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;

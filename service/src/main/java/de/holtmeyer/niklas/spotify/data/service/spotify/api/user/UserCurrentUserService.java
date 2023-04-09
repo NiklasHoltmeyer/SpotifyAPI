@@ -1,9 +1,12 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.user;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.user;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Artist;
+import de.holtmeyer.niklas.spotify.data.entity.dto.Owner;
 import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
+import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.Pageable;
 import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.Artists;
+import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.BasePlaylist;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopTracksResponse;
@@ -13,19 +16,28 @@ import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyDeleteRequ
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
 import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
+import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
 import kong.unirest.JsonNode;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Service
 public class UserCurrentUserService {
     @Autowired
     @Getter
     AccessToken accessToken;
+
+    @Autowired
+    private PlaylistAPI playlistAPI;
 
     public Response<? extends UserProfile> getProfile(){
         return SpotifyGetRequest.<UserProfile>builder()
@@ -127,5 +139,25 @@ public class UserCurrentUserService {
         queryParameter.put("time_range", "long_term");
 
         return queryParameter;
+    }
+
+    public Optional<List<String>> getFollowedPlaylistsOwners(@NonNull Predicate<Owner> ownerFilter){
+        var playlistsCurrentUserFollows = this.playlistAPI
+                .getCurrentUserPlaylists()
+                .getBody()
+                .orElse(null);
+
+        if(playlistsCurrentUserFollows == null){
+            return Optional.empty();
+        }
+
+        var followedPlaylists = playlistsCurrentUserFollows.stream()
+                .map(BasePlaylist::getOwner)
+                .filter(ownerFilter)
+                .map(HasHrefWithID::getId)
+                .distinct()
+                .toList();
+
+        return Optional.of(followedPlaylists);
     }
 }

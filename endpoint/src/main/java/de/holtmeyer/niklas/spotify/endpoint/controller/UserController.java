@@ -4,7 +4,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.UserProfile;
 import de.holtmeyer.niklas.spotify.data.entity.dto.pagable.Artists;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
-import de.holtmeyer.niklas.spotify.data.service.spotify.user.UserService;
+import de.holtmeyer.niklas.spotify.data.service.spotify.api.user.UserService;
 import de.holtmeyer.niklas.spotify.endpoint.api.UserAPI;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,7 @@ package de.holtmeyer.niklas.spotify.endpoint.controller;
 import de.holtmeyer.niklas.spotify.data.entity.dto.Playlist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.PlaylistDetails;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
-import de.holtmeyer.niklas.spotify.data.service.spotify.playlist.PlaylistAPI;
+import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.artist;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.artist;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Album;
 import de.holtmeyer.niklas.spotify.data.entity.dto.Artist;

@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.playlist;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
 import org.springframework.beans.factory.annotation.Autowired;

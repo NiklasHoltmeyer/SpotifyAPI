@@ -1,4 +1,4 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.track;
+package de.holtmeyer.niklas.spotify.data.service.spotify.api.track;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Track;
 import de.holtmeyer.niklas.spotify.data.entity.dto.track.UserSavedTrack;
