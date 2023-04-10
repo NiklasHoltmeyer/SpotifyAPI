@@ -32,7 +32,7 @@ public class PlaylistService {
         this.api.removeTracks(playlist_id, trackuris);
     }
 
-    public void copyAllTracks(String playlist_src_id, String playlist_dst_id, boolean shuffle){
+    public int copyAllTracks(String playlist_src_id, String playlist_dst_id, boolean shuffle){
         // TODO zu spezifisch -> löschen
         var trackURIs = this.listTracks(playlist_src_id);
 
@@ -41,5 +41,7 @@ public class PlaylistService {
         }
 
         this.api.addTracks(playlist_dst_id, trackURIs);
+
+        return trackURIs.size();
     }
 }

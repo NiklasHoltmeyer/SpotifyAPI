@@ -116,10 +116,11 @@ public class DevController {
 
         this.playlistAPI.addTracks(playlist_dst_id, allSongUris);
 
-        var desc = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
-        this.playlistAPI.setDetails(playlist_dst_id, new PlaylistDetailsRequestBody(null, null, null, desc));
+        var desc = logDesc(allSongUris.size());
 
-        return "WUMBO";
+        this.playlistAPI.setDetails(playlist_dst_id, desc);
+
+        return desc;
     }
 
     @GetMapping("/dev/wombo2combo")
@@ -171,19 +172,17 @@ public class DevController {
 
         this.playlistAPI.addTracks(playlist_dst_id, allSongUris);
 
-        var desc = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
-        this.playlistAPI.setDetails(playlist_dst_id, new PlaylistDetailsRequestBody(null, null, null, desc));
+        var desc = logDesc(allSongUris.size());
+        this.playlistAPI.setDetails(playlist_dst_id, desc);
 
-        return "WUMBO";
+        return desc;
     }
     @GetMapping("/dev/shuffle")
     public String shuffle(){
         String src = "ParkSink";
         String dst = "Rollercoaster Music";
 
-        shuffle(src, dst);
-
-        return "Ok";
+        return shuffle(src, dst);
     }
 
     @GetMapping("/dev/politik")
@@ -191,9 +190,7 @@ public class DevController {
         var dst = "non-biased Release Radar";
         var srcs = List.of("Discover Weekly", "Release Radar", "Deutschrap Brandneu", "Rap wieder echt");
 
-        this.sortByPopularity(srcs, dst);
-
-        return "wupdi";
+        return this.sortByPopularity(srcs, dst);
     }
 
     @GetMapping("/dev/all")
@@ -204,18 +201,19 @@ public class DevController {
         return "all";
     }
 
-    public void shuffle(String playlist_src, String playlist_dst){
+    public String shuffle(String playlist_src, String playlist_dst){
         String playlist_src_id = findPlayListByName(playlist_src);
         String playlist_dst_id = findPlayListByName(playlist_dst);
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
-        this.playlistService.copyAllTracks(playlist_src_id, playlist_dst_id, true);
+        var count = this.playlistService.copyAllTracks(playlist_src_id, playlist_dst_id, true);
 
-        var desc = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
-        this.playlistAPI.setDetails(playlist_dst_id, new PlaylistDetailsRequestBody(null, null, null, desc));
+        var desc = logDesc(count);
+        this.playlistAPI.setDetails(playlist_dst_id, desc);
+        return desc.getDescription();
     }
 
-    public void sortByPopularity(List<String> playlist_srcs, String playlist_dst){
+    public String sortByPopularity(List<String> playlist_srcs, String playlist_dst){
         var trackURIs = playlist_srcs.stream()
                 .map(this::findPlayListByName)
                 .map(this.playlistService::listTracks)
@@ -245,8 +243,9 @@ public class DevController {
         this.playlistService.deleteAllTracks(playlist_dst_id);
         this.playlistService.api.addTracks(playlist_dst_id, trackURIs);
 
-        var desc = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
-        this.playlistAPI.setDetails(playlist_dst_id, new PlaylistDetailsRequestBody(null, null, null, desc));
+        var desc = logDesc(trackURIs.size());
+        this.playlistAPI.setDetails(playlist_dst_id, desc);
+        return desc.getDescription();
     }
 
     private static Predicate<PlaylistTrack> filterByAge(int maxAgeInDays) {
@@ -326,5 +325,13 @@ public class DevController {
                 .toList();
 
         return ListStream.flatten(savedTracks, playlistTracks).distinct().toList();
+    }
+
+    private PlaylistDetailsRequestBody logDesc(int tracks){
+        var date = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
+
+        var desc = "Tracks: %s. %s".formatted(tracks, date);
+
+        return new PlaylistDetailsRequestBody(null, null, null, desc);
     }
 }
