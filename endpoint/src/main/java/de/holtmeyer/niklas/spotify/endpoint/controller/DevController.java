@@ -15,6 +15,8 @@ import de.holtmeyer.niklas.spotify.data.service.spotify.api.track.TrackAPI;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.track.TrackService;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.user.UserService;
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.filter.*;
+import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.PlaylistMapper;
+import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.ResponseMapper;
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.TrackMapper;
 import de.holtmeyer.niklas.spotify.endpoint.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,16 +77,14 @@ public class DevController {
         var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
                 .stream()
                 .filter(OwnerFilter.notInList(ignorePlaylistOwners))
-                .map(BasePlaylist::getOwner)
+                .map(PlaylistMapper::getOwner) //reference via BasePlaylist::getOwner does not work!
                 .map(HasHrefWithID::getId)
                 .distinct()
                 .toList();
 
         var WUMBOPlayListIDs = userIDsOfPlaylistsCurrentUserFollows.stream()
                 .map(user_id -> this.playlistAPI.getUserPlaylists(user_id))
-                .map(response -> response.getBody().get())
-                .map(Arrays::asList)
-                .flatMap(Collection::stream)
+                .map(ResponseMapper::asList)
                 .flatMap(Collection::stream)
                 .map(HasHrefWithID::getId)
                 .distinct()
@@ -242,7 +242,7 @@ public class DevController {
     }
 
     private static Predicate<PlaylistTrack> filterByAge(int maxAgeInDays) {
-        return DateFilter.age(maxAgeInDays, TrackMapper::getReleaseDate);
+        return DateFilter.age(maxAgeInDays, TrackMapper::getReleaseDate, TrackMapper::getReleaseDatePrecision);
     }
 
     public void sortByArtistPopularity(List<PlaylistTrack> tracks){

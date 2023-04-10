@@ -32,4 +32,8 @@ public class Response<T> {
         if(this.success!=null) return this.success;
         return httpResponse.getStatus() >= 200 && httpResponse.getStatus() < 300;
     }
+
+    public void setSuccess(int statusCode){
+        this.success = statusCode >= 200 && statusCode < 300;
+    }
 }

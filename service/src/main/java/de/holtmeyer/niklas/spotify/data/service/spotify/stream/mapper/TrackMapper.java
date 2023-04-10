@@ -18,4 +18,11 @@ public class TrackMapper {
     public static String getReleaseDate(PlaylistTrack track){
         return Optional.ofNullable(track).map(PlaylistTrack::getAlbum).map(Album::getRelease_date).orElse(null);
     }
+
+    /**
+     * @return "year", "month", "day"
+     */
+    public static String getReleaseDatePrecision(PlaylistTrack track){
+        return Optional.ofNullable(track).map(PlaylistTrack::getAlbum).map(Album::getRelease_date_precision).orElse(null);
+    }
 }

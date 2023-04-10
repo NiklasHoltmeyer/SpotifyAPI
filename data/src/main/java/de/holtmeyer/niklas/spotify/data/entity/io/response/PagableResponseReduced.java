@@ -1,6 +1,7 @@
 package de.holtmeyer.niklas.spotify.data.entity.io.response;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.Pageable;
+import kong.unirest.HttpResponse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,13 +18,14 @@ public class PagableResponseReduced<T extends Pageable, I> extends Response<List
                 .map(this::cast)
                 .toList();
 
-        List<I> body = null;
-        if(!items.isEmpty()){
-            body = items;
+        var statusCode = responseList.getHttpResponse().stream().findAny().map(HttpResponse::getStatus).orElse(404);
+        this.setSuccess(statusCode);
+
+        if(items.isEmpty() && !this.isSuccess()){
+            items = null;
         }
 
-        this.setBody(Optional.ofNullable(body));
-        this.setSuccess(this.body.isPresent());
+        this.setBody(Optional.ofNullable(items));
     }
 
     @SuppressWarnings("unchecked")
