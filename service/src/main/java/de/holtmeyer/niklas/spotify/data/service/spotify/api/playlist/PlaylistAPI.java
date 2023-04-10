@@ -21,6 +21,7 @@ import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPostReques
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.util.ListUtil;
 import de.holtmeyer.niklas.spotify.data.service.configuration.endpoint.PlaylistEndpoint;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ import java.util.Map;
  * Access Spotify-Playlist Endpoints
  */
 @Service
+@AllArgsConstructor
 public class PlaylistAPI {
-    @Autowired
     AccessToken accessToken;
     public Response<? extends Playlist> get(String playlist_id){
         var url = PlaylistEndpoint.BY_ID.formatted(playlist_id);

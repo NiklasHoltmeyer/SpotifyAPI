@@ -13,7 +13,6 @@ import java.util.Arrays;
 
 @Component @AllArgsConstructor
 public class InterceptAccessToken implements HandlerInterceptor {
-    @Autowired
     AccessToken accessToken;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

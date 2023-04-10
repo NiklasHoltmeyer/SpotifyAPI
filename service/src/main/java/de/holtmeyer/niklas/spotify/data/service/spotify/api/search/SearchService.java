@@ -6,6 +6,7 @@ import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SearchService {
-    @Autowired
-    @Getter
     AccessToken accessToken;
 //TODO UNGETESTET -> Data nicht feddisch!
     public Response<? extends SearchResult> search(String query, List<SearchType> types, String include_external, String limit, String offset){

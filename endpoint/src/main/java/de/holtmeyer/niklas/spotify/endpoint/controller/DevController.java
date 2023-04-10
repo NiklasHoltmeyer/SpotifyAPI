@@ -19,6 +19,7 @@ import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.PlaylistMa
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.ResponseMapper;
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.TrackMapper;
 import de.holtmeyer.niklas.spotify.endpoint.exception.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,25 +36,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
+@AllArgsConstructor
 public class DevController {
-    @Autowired
     SearchService searchService;
-    @Autowired
     PlaylistAPI playlistAPI;
-
-    @Autowired
     PlaylistService playlistService;
-
-    @Autowired
     TrackAPI trackAPI;
-
-    @Autowired
     TrackService trackService;
-
-    @Autowired
     ArtistAPI artistAPI;
-
-    @Autowired
     UserService userService;
 
     final String USER_ID = "kngholdy";

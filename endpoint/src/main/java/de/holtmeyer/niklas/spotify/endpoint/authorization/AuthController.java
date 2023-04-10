@@ -2,6 +2,7 @@ package de.holtmeyer.niklas.spotify.endpoint.authorization;
 
 import de.holtmeyer.niklas.spotify.data.service.authorization.AuthorizationService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 public class AuthController implements AuthAPI {
-    @Autowired
     AuthorizationService authorizationService;
     public RedirectView getLogin(HttpServletResponse response,
                                  @CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) throws IOException {

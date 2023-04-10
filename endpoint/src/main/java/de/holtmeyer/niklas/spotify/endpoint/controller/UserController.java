@@ -6,6 +6,7 @@ import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.UsersTopArtistsResponse;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.user.UserService;
 import de.holtmeyer.niklas.spotify.endpoint.api.UserAPI;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class UserController implements UserAPI<UserProfile> {
-    @Autowired @Getter
     UserService userService;
 
     public Response<? extends UserProfile> get(@PathVariable String user_id) {

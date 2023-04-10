@@ -2,6 +2,7 @@ package de.holtmeyer.niklas.spotify.endpoint.controller;
 
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,8 @@ import java.net.URI;
 @RestController
 @RequestMapping(path = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@AllArgsConstructor
 public class IndexController {
-    @Autowired
-    @Getter
     AccessToken accessToken;
 
     @SneakyThrows

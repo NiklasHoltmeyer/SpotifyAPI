@@ -8,6 +8,8 @@ import de.holtmeyer.niklas.spotify.data.service.authorization.response.RequestAc
 import de.holtmeyer.niklas.spotify.data.service.configuration.ClientConfiguration;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +26,9 @@ import java.util.Optional;
  * https://developer.spotify.com/documentation/general/guides/authorization/code-flow/
  */
 @Service
+@AllArgsConstructor
 public class AuthorizationService {
-    @Autowired
     AccessToken accessToken;
-
-    @Autowired
     ClientConfiguration clientConfiguration;
 
     public RedirectView getLoginRequestAuth(HttpServletResponse servletResponse){

@@ -4,6 +4,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHref;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PlaylistList {
-    @Autowired public PlaylistAPI api;
-    @Autowired public CurrentUserPlaylistService current;
+    PlaylistAPI api;
+    CurrentUserPlaylistService current;
 
     /**
      * Returns all tracks of a playlist. Throws an exception if no valid response is returned. Returns a mutable list.

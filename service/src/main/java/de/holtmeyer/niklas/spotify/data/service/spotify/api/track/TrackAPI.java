@@ -7,6 +7,7 @@ import de.holtmeyer.niklas.spotify.data.entity.io.response.PagableResponseReduce
 import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.configuration.endpoint.TrackEndpoint;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class TrackAPI {
-    @Autowired
     AccessToken accessToken;
 
     public Response<List<UserSavedTrack>> getCurrentSavedTracks(){

@@ -4,6 +4,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.Playlist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.PlaylistDetails;
 import de.holtmeyer.niklas.spotify.data.entity.io.response.Response;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/playlist", produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@AllArgsConstructor
 public class PlaylistController implements de.holtmeyer.niklas.spotify.endpoint.api.PlaylistAPI {
-    @Autowired
     PlaylistAPI playlistAPI;
 
     public Response get(@PathVariable String playlist_id) {

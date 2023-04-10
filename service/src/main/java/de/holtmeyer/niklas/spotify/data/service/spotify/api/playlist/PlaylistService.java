@@ -1,6 +1,7 @@
 package de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PlaylistService {
-    @Autowired public PlaylistAPI api;
-    @Autowired public CurrentUserPlaylistService current;
-    @Autowired public PlaylistList list;
+    public PlaylistAPI api;
+    public CurrentUserPlaylistService current;
+    public PlaylistList list;
 
     // todo actions remove -> api access only protected?
     public void deleteAllTracks(String playlist_id){

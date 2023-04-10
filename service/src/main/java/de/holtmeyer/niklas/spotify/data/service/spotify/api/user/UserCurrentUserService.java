@@ -19,6 +19,7 @@ import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistService;
 import kong.unirest.JsonNode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +33,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Service
+@AllArgsConstructor
 public class UserCurrentUserService {
-    @Autowired
-    @Getter
     AccessToken accessToken;
-
-    @Autowired
     private PlaylistService playlistService;
 
     public Response<? extends UserProfile> getProfile(){

@@ -1,5 +1,6 @@
 import de.holtmeyer.niklas.spotify.data.service.configuration.ClientConfiguration;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -11,9 +12,10 @@ import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"de.holtmeyer.niklas.spotify"})
+@AllArgsConstructor
 public class Application {
-    @Autowired Environment env;
-    @Autowired ClientConfiguration clientConfiguration;
+    Environment env;
+    ClientConfiguration clientConfiguration;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

@@ -11,6 +11,7 @@ import de.holtmeyer.niklas.spotify.data.service.authorization.AccessToken;
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest;
 import de.holtmeyer.niklas.spotify.data.service.common.util.ListUtil;
 import de.holtmeyer.niklas.spotify.data.service.configuration.endpoint.ArtistEndpoint;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class ArtistAPI {
-    @Autowired
     AccessToken accessToken;
 
     public Response<? extends Artist> get(String artist_id){
