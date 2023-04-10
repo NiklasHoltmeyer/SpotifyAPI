@@ -254,9 +254,9 @@ public class DevController {
                 .map(HasHrefWithID::getId)
                 .toList();
 
-        var artistPopularity = artistAPI.get(artistsIDs)
-                .getBody().get()
+        var artistPopularity = ResponseMapper.getBody(artistAPI.get(artistsIDs))
                 .stream()
+                .filter(ar -> Objects.nonNull(ar.getPopularity()))
                 .collect(Collectors.toMap(HasHrefWithID::getId, Artist::getPopularity));
 
         Function<PlaylistTrack, Double> calcPopularity = (track) -> Stream.of(track.getArtists())

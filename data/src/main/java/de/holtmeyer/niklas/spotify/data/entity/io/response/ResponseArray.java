@@ -15,19 +15,23 @@ import java.util.function.Function;
 public class ResponseArray<MultipleEntities, SingleEntity> extends Response<List<SingleEntity>> {
     public ResponseArray(List<? extends Response<? extends MultipleEntities>> responseList, Function<MultipleEntities, SingleEntity[]> getArrayItems) {
         var items = responseList.stream()
-                .map(Response::getBody)
-                .map(x->x.orElse(null))
+                .map(this::getBody)
                 .filter(Objects::nonNull)
                 .map(getArrayItems)
                 .map(List::of)
                 .flatMap(Collection::stream)
                 .toList();
 
-        var isRequestSucces = responseList.stream().map(Response::isSuccess).noneMatch(x-> x == false);
+        var isRequestSuccess = responseList.stream().map(Response::isSuccess).noneMatch(x-> x == false);
 
         this.body = Optional.of(items);
-        this.success = isRequestSucces;
+        this.success = isRequestSuccess;
+    }
+
+    private MultipleEntities getBody(Response<? extends MultipleEntities> reponse){
+        if(reponse == null || !reponse.isSuccess()){
+            return null;
+        }
+        return Optional.ofNullable(reponse).flatMap(Response::getBody).orElse(null);
     }
 }
-/*   "release_date" : "2023-03-31",
-        "release_date_precision" : "day", */

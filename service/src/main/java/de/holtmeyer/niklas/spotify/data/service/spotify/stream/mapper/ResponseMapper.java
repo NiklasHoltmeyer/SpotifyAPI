@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 public class ResponseMapper {
    public static <T> Stream<T> asFlatStream(Response<List<T>> responses){
-        var items = responses.getBody().map(Arrays::asList).orElse(null);
+        var items = responeBodyList(responses);
 
         if(items == null){
             return Stream.empty();
@@ -18,5 +18,13 @@ public class ResponseMapper {
 
     public static <T> List<T> asList(Response<List<T>> responses){
         return asFlatStream(responses).toList();
+    }
+
+    public static <T> T getBody(Response<T> reponse){
+        return Optional.ofNullable(reponse).flatMap(Response::getBody).orElse(null);
+    }
+
+    public static <T> List<List<T>> responeBodyList(Response<List<T>> responses) {
+       return Optional.ofNullable(responses).flatMap(Response::getBody).map(Arrays::asList).orElse(null);
     }
 }
