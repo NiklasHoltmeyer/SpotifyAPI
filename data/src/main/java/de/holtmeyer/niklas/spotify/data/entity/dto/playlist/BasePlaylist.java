@@ -1,5 +1,6 @@
 package de.holtmeyer.niklas.spotify.data.entity.dto.playlist;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
 import de.holtmeyer.niklas.spotify.data.entity.dto.Followers;
 import de.holtmeyer.niklas.spotify.data.entity.dto.Owner;
@@ -23,5 +24,6 @@ public class BasePlaylist<TracksType> extends HasHrefWithID {
     @SerializedName("public") @Accessors(fluent = true)
     Boolean isPublic;
     String snapshot_id;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     TracksType tracks;
 }

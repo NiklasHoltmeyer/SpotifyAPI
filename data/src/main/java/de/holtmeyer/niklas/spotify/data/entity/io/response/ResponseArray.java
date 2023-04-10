@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -15,7 +16,8 @@ public class ResponseArray<MultipleEntities, SingleEntity> extends Response<List
     public ResponseArray(List<? extends Response<? extends MultipleEntities>> responseList, Function<MultipleEntities, SingleEntity[]> getArrayItems) {
         var items = responseList.stream()
                 .map(Response::getBody)
-                .map(Optional::get)
+                .map(x->x.orElse(null))
+                .filter(Objects::nonNull)
                 .map(getArrayItems)
                 .map(List::of)
                 .flatMap(Collection::stream)
@@ -27,3 +29,5 @@ public class ResponseArray<MultipleEntities, SingleEntity> extends Response<List
         this.success = isRequestSucces;
     }
 }
+/*   "release_date" : "2023-03-31",
+        "release_date_precision" : "day", */
