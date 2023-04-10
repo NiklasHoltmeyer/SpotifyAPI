@@ -1,13 +1,12 @@
 package de.holtmeyer.niklas.spotify.endpoint.controller;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Artist;
-import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHref;
+import de.holtmeyer.niklas.spotify.data.entity.dto.Track;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.BasePlaylist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.PlaylistDetailsRequestBody;
 import de.holtmeyer.niklas.spotify.data.service.common.util.ListStream;
-import de.holtmeyer.niklas.spotify.data.service.common.util.ListUtil;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.artist.ArtistAPI;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistService;
@@ -15,10 +14,8 @@ import de.holtmeyer.niklas.spotify.data.service.spotify.api.search.SearchService
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.track.TrackAPI;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.track.TrackService;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.user.UserService;
-import de.holtmeyer.niklas.spotify.data.service.spotify.filter.ListFilter;
-import de.holtmeyer.niklas.spotify.data.service.spotify.filter.OwnerFilter;
-import de.holtmeyer.niklas.spotify.data.service.spotify.filter.UriFilter;
-import de.holtmeyer.niklas.spotify.endpoint.api.UserAPI;
+import de.holtmeyer.niklas.spotify.data.service.spotify.stream.filter.*;
+import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.TrackMapper;
 import de.holtmeyer.niklas.spotify.endpoint.exception.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +54,8 @@ public class DevController {
     @Autowired
     UserService userService;
 
+    final String USER_ID = "kngholdy";
+
     @GetMapping("/dev/wombocombo")
     public Object wombocombo(){
         boolean shuffle = false;
@@ -67,10 +66,7 @@ public class DevController {
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
 
-        var playlistsCurrentUserFollows = this.playlistAPI
-                .getCurrentUserPlaylists()
-                .getBody()
-                .orElse(null);
+        var playlistsCurrentUserFollows = this.playlistService.list.follows();
 
         if(playlistsCurrentUserFollows == null){
             return Optional.empty();
@@ -97,7 +93,7 @@ public class DevController {
         var wombooo = this.currentAndPlaylistSongs();
 
         var allSongUris = WUMBOPlayListIDs.parallelStream()
-                .map(this.playlistService::listTracks)
+                .map(this.playlistService.list::tracks)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .filter(UriFilter.notInList(wombooo))
@@ -133,10 +129,7 @@ public class DevController {
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
 
-        var playlistsCurrentUserFollows = this.playlistAPI
-                .getCurrentUserPlaylists()
-                .getBody()
-                .get();
+        var playlistsCurrentUserFollows = this.playlistService.list.follows();
 
         var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
                 .stream()
@@ -159,7 +152,7 @@ public class DevController {
         var wombooo = this.currentAndPlaylistSongs();
 
         var allSongUris = WUMBOPlayListIDs.parallelStream()
-                .map(this.playlistService::listTracks)
+                .map(this.playlistService.list::tracks)
                 .flatMap(Collection::stream)
                 .filter(Objects::nonNull)
                 .filter(x->!wombooo.contains(x.getUri()))
@@ -216,7 +209,7 @@ public class DevController {
     public String sortByPopularity(List<String> playlist_srcs, String playlist_dst){
         var trackURIs = playlist_srcs.stream()
                 .map(this::findPlayListByName)
-                .map(this.playlistService::listTracks)
+                .map(this.playlistService.list::tracks)
                 .flatMap(Collection::stream)
                 .distinct()
                 .filter(Objects::nonNull)
@@ -249,23 +242,7 @@ public class DevController {
     }
 
     private static Predicate<PlaylistTrack> filterByAge(int maxAgeInDays) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        var now = LocalDate.parse(LocalDate.now().toString(), formatter);
-
-        return track -> {
-            try{
-                var releaseDate = track.getAlbum().getRelease_date();
-                LocalDate releaseDateTime = LocalDate.parse(releaseDate, formatter);
-                var ageInDays = now.toEpochDay() - releaseDateTime.toEpochDay();
-                return ageInDays < maxAgeInDays;
-            }catch(Exception e){
-                // yyyy -> 2009
-                // yyyy-mm -> 1974-11
-//                System.out.println("DATE: " + track.getAlbum().getRelease_date());
-                return false;
-            }
-
-        };
+        return DateFilter.age(maxAgeInDays, TrackMapper::getReleaseDate);
     }
 
     public void sortByArtistPopularity(List<PlaylistTrack> tracks){
@@ -286,7 +263,7 @@ public class DevController {
                     .map(HasHrefWithID::getId)
                     .mapToDouble(artistPopularity::get)
                     .average()
-                    .orElseThrow(() -> new RuntimeException("todo"));
+                    .orElseThrow();
 
         tracks.sort(Comparator.comparing(calcPopularity).reversed());
     }
@@ -304,25 +281,17 @@ public class DevController {
         System.out.println(timestamp + " " + c.size());
     }
     List<String> currentAndPlaylistSongs(){
-        var savedTracks = this.trackService.current.listSaved().stream()
-                .map(HasHref::getUri)
-                .toList();
-
         var excludePlaylists = List.of("Low Orbit Ion Cannon", "WUMBO", "Low Orbit Ion Cannon - Minus");
-        var playlistTracks = this.playlistAPI
-                .getCurrentUserPlaylists()
-                .getBody()
-                .get()
-                .parallelStream()
-                .filter(x->x.getOwner().getId().equals("kngholdy"))
-                .filter(x->!excludePlaylists.contains(x.getName()))
-                .map(HasHrefWithID::getId)
-                .distinct()
-                .map(this.playlistService::listTracks)
-                .flatMap(Collection::stream)
-                .distinct()
-                .map(HasHref::getUri)
-                .toList();
+
+        var savedTracks = this.trackService.list.saved(TrackMapper::getUri);
+
+        var playlistBlacklistFilter = PlaylistFilter.inList(excludePlaylists);
+        var ownerFilter = OwnerFilter.ownerID(USER_ID);
+
+        var playlistFilter = playlistBlacklistFilter.and(ownerFilter);
+        Predicate<PlaylistTrack> trackFilter = ListFilter::includeAll;
+
+        var playlistTracks = this.playlistService.list.tracksUserFollows(playlistFilter, trackFilter);
 
         return ListStream.flatten(savedTracks, playlistTracks).distinct().toList();
     }

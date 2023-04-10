@@ -1,6 +1,5 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.filter;
+package de.holtmeyer.niklas.spotify.data.service.spotify.stream.filter;
 
-import de.holtmeyer.niklas.spotify.data.entity.dto.Owner;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHref;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -9,6 +9,18 @@ import java.util.List;
 import java.util.function.Function;
 
 @Service
-public class CurrentUserTrackService {
-    @Autowired TrackAPI trackAPI;
+public class TrackList {
+    @Autowired
+    public TrackAPI api;
+    @Autowired
+    public CurrentUserTrackService current;
+
+    public <T> List<T> saved(Function<UserSavedTrack, T> mapper){
+        return this.api.getCurrentSavedTracks()
+                .getBody()
+                .get()
+                .stream()
+                .map(mapper)
+                .toList();
+    }
 }

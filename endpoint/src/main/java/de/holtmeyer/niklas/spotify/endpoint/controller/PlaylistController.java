@@ -18,7 +18,7 @@ public class PlaylistController implements de.holtmeyer.niklas.spotify.endpoint.
     @Autowired
     PlaylistAPI playlistAPI;
 
-    public Response<? extends Playlist> get(@PathVariable String playlist_id) {
+    public Response get(@PathVariable String playlist_id) {
         return playlistAPI.get(playlist_id);
     }
 

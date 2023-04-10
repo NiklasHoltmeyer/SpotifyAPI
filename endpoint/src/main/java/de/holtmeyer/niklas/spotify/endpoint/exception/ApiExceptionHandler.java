@@ -32,6 +32,18 @@ public class ApiExceptionHandler {
                 ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId()))
         );
 
-        return new ResponseEntity<>(apiRequestException, HttpStatusCode.valueOf(404));
+        return new ResponseEntity<>(apiRequestException, HttpStatusCode.valueOf(HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler(value = {RuntimeException.class})
+    public ResponseEntity<Object> handleEntityNotFoundException(RuntimeException exception){
+        var apiRequestException = new ApiException(
+                exception.getMessage(),
+                exception,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ZonedDateTime.now(ZoneId.of(ZoneId.systemDefault().getId()))
+        );
+
+        return new ResponseEntity<>(apiRequestException, HttpStatusCode.valueOf(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }

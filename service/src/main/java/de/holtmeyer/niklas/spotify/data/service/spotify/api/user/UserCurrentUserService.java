@@ -17,6 +17,7 @@ import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyGetRequest
 import de.holtmeyer.niklas.spotify.data.service.common.request.SpotifyPutRequest;
 import de.holtmeyer.niklas.spotify.data.service.configuration.Endpoint;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistAPI;
+import de.holtmeyer.niklas.spotify.data.service.spotify.api.playlist.PlaylistService;
 import kong.unirest.JsonNode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,7 +38,7 @@ public class UserCurrentUserService {
     AccessToken accessToken;
 
     @Autowired
-    private PlaylistAPI playlistAPI;
+    private PlaylistService playlistService;
 
     public Response<? extends UserProfile> getProfile(){
         return SpotifyGetRequest.<UserProfile>builder()
@@ -142,8 +143,8 @@ public class UserCurrentUserService {
     }
 
     public Optional<List<String>> getFollowedPlaylistsOwners(@NonNull Predicate<Owner> ownerFilter){
-        var playlistsCurrentUserFollows = this.playlistAPI
-                .getCurrentUserPlaylists()
+
+        var playlistsCurrentUserFollows = this.playlistService.current.follows()
                 .getBody()
                 .orElse(null);
 

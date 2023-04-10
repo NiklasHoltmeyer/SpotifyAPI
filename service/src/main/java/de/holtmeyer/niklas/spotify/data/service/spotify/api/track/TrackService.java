@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 public class TrackService {
     @Autowired public TrackAPI api;
     @Autowired public CurrentUserTrackService current;
-
+    @Autowired public TrackList list;
 }

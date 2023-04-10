@@ -1,6 +1,5 @@
-package de.holtmeyer.niklas.spotify.data.service.spotify.filter;
+package de.holtmeyer.niklas.spotify.data.service.spotify.stream.filter;
 
-import de.holtmeyer.niklas.spotify.data.entity.dto.Owner;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -16,5 +15,9 @@ public class ListFilter {
 
     public static <T> Predicate<T> notInList(List<String> items, Function<T, String> getKey){
         return Predicate.not(ListFilter.inList(items, getKey));
+    }
+
+    public static <T> boolean includeAll(T t){
+        return true;
     }
 }

@@ -12,18 +12,11 @@ import java.util.stream.Collectors;
 public class PlaylistService {
     @Autowired public PlaylistAPI api;
     @Autowired public CurrentUserPlaylistService current;
+    @Autowired public PlaylistList list;
 
-    public List<PlaylistTrack> listTracks(String playlist_id) {
-        return this.api.getTracks(playlist_id, null, null, null)
-                .getBody()
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(x->x.getTrack())// Methode Reference does not work sadly
-                .collect(Collectors.toList());
-    }
-
+    // todo actions remove -> api access only protected?
     public void deleteAllTracks(String playlist_id){
-        var trackuris = this.listTracks(playlist_id);
+        var trackuris = this.list.tracks(playlist_id);
 
         if(trackuris.isEmpty()){
             return;
@@ -34,7 +27,7 @@ public class PlaylistService {
 
     public int copyAllTracks(String playlist_src_id, String playlist_dst_id, boolean shuffle){
         // TODO zu spezifisch -> löschen
-        var trackURIs = this.listTracks(playlist_src_id);
+        var trackURIs = this.list.tracks(playlist_src_id);
 
         if(shuffle){
             Collections.shuffle(trackURIs);
