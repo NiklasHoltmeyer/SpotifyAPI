@@ -20,11 +20,11 @@ public class ResponseMapper {
         return asFlatStream(responses).toList();
     }
 
-    public static <T> T getBody(Response<T> reponse){
-        return Optional.ofNullable(reponse).flatMap(Response::getBody).orElse(null);
+    public static <T> Optional<T> getBody(Response<T> reponse){
+        return Optional.ofNullable(reponse).flatMap(Response::getBody);
     }
 
     public static <T> List<List<T>> responeBodyList(Response<List<T>> responses) {
-       return Optional.ofNullable(responses).flatMap(Response::getBody).map(Arrays::asList).orElse(null);
+       return Optional.ofNullable(responses).flatMap(Response::getBody).map(Arrays::asList).orElseThrow();
     }
 }

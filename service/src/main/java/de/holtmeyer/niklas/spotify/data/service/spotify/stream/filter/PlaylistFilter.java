@@ -25,4 +25,12 @@ public class PlaylistFilter {
                 .map(BasePlaylist::getName)
                 .orElse(null);
     }
+
+    public static Predicate<PlaylistsWithMinimalTrackInfo> descriptionContains(String value){
+        return playlist -> playlist.getDescription().contains(value);
+    }
+
+    public static Predicate<PlaylistsWithMinimalTrackInfo> descriptionNotContains(String value){
+        return Predicate.not(PlaylistFilter.descriptionContains(value));
+    }
 }

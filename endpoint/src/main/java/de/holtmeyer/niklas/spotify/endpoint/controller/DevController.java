@@ -5,6 +5,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.Track;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.BasePlaylist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
+import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.PlaylistDetailsRequestBody;
 import de.holtmeyer.niklas.spotify.data.service.common.util.ListStream;
 import de.holtmeyer.niklas.spotify.data.service.spotify.api.artist.ArtistAPI;
@@ -48,11 +49,14 @@ public class DevController {
 
     final String USER_ID = "kngholdy";
 
+    final Predicate<PlaylistsWithMinimalTrackInfo> filterGeneratedPlaylist = PlaylistFilter.descriptionNotContains("Generate-Date:");
+
     @GetMapping("/dev/wombocombo")
     public Object wombocombo(){
         boolean shuffle = false;
         List<String> trio = List.of("kngholdy", "Kutay Gündogan", "Ali Emngl");
         List<String> ignorePlaylistOwners = List.of("Spotify");
+        Predicate<PlaylistsWithMinimalTrackInfo> playlistFilter = OwnerFilter.notInList(ignorePlaylistOwners).and(filterGeneratedPlaylist);
         String dst = "Low Orbit Ion Cannon";
         String playlist_dst_id = findPlayListByName(dst);
 
@@ -66,7 +70,7 @@ public class DevController {
 
         var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
                 .stream()
-                .filter(OwnerFilter.notInList(ignorePlaylistOwners))
+                .filter(playlistFilter)
                 .map(PlaylistMapper::getOwner) //reference via BasePlaylist::getOwner does not work!
                 .map(HasHrefWithID::getId)
                 .distinct()
@@ -116,37 +120,27 @@ public class DevController {
         String dst = "Low Orbit Ion Cannon - Minus";
         String playlist_dst_id = findPlayListByName(dst);
         List<String> ignorePlaylistOwners = List.of("Spotify");
+        Predicate<PlaylistsWithMinimalTrackInfo> playlistFilter = OwnerFilter.notInList(ignorePlaylistOwners).and(filterGeneratedPlaylist);
+
+        //Generated
+        Function<PlaylistsWithMinimalTrackInfo, String> playlistMapper = PlaylistMapper::getOwnerID;
+
+        Predicate<PlaylistTrack> nonNull = Objects::nonNull;
+        Function<List<String>, Predicate<PlaylistTrack>> trackFilter = (trackBlacklist) -> nonNull
+                .and(UriFilter.notInList(trackBlacklist))
+                .and(filterByAge(14));
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
 
-        var playlistsCurrentUserFollows = this.playlistService.list.follows();
+        var userIDsOfPlaylistsCurrentUserFollows = this.playlistService.list.follows(playlistFilter, playlistMapper);
 
-        var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
-                .stream()
-                .filter(OwnerFilter.notInList(ignorePlaylistOwners))
-                .map(BasePlaylist::getOwner)
-                .map(HasHrefWithID::getId)
-                .distinct()
-                .toList();
+        var WUMBOPlayListIDs = this.playlistService.list.playlistUsersFollows(userIDsOfPlaylistsCurrentUserFollows);
 
-        var WUMBOPlayListIDs = userIDsOfPlaylistsCurrentUserFollows.stream()
-                .map(user_id -> this.playlistAPI.getUserPlaylists(user_id))
-                .map(response -> response.getBody().get())
-                .map(Arrays::asList)
-                .flatMap(Collection::stream)
-                .flatMap(Collection::stream)
-                .map(HasHrefWithID::getId)
-                .distinct()
-                .toList();
 
         var wombooo = this.currentAndPlaylistSongs();
 
-        var allSongUris = WUMBOPlayListIDs.parallelStream()
-                .map(this.playlistService.list::tracks)
-                .flatMap(Collection::stream)
-                .filter(Objects::nonNull)
-                .filter(x->!wombooo.contains(x.getUri()))
-                .filter(filterByAge(14))
+
+        var allSongUris = this.playlistService.list.list(WUMBOPlayListIDs, trackFilter.apply(wombooo))
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -244,7 +238,7 @@ public class DevController {
                 .map(HasHrefWithID::getId)
                 .toList();
 
-        var artistPopularity = ResponseMapper.getBody(artistAPI.get(artistsIDs))
+        var artistPopularity = ResponseMapper.getBody(artistAPI.get(artistsIDs)).orElseThrow()
                 .stream()
                 .filter(ar -> Objects.nonNull(ar.getPopularity()))
                 .collect(Collectors.toMap(HasHrefWithID::getId, Artist::getPopularity));
@@ -289,7 +283,7 @@ public class DevController {
     private PlaylistDetailsRequestBody logDesc(int tracks){
         var date = new SimpleDateFormat("dd.MM.yyyy").format(new Date());
 
-        var desc = "Tracks: %s. %s".formatted(tracks, date);
+        var desc = "Tracks: %s. Generate-Date: %s".formatted(tracks, date);
 
         return new PlaylistDetailsRequestBody(null, null, null, desc);
     }

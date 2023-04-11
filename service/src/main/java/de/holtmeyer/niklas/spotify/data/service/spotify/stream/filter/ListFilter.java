@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ListFilter {
     public static <T> Predicate<T> inList(List<String> items, Function<T, String> getKey){
-        return owner -> items.contains(getKey.apply(owner));
+        return list -> items.contains(getKey.apply(list));
     }
 
     public static <T> Predicate<T> notInList(List<String> items, Function<T, String> getKey){
