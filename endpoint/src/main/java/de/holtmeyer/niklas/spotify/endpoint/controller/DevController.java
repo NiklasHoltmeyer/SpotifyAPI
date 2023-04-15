@@ -1,9 +1,7 @@
 package de.holtmeyer.niklas.spotify.endpoint.controller;
 
 import de.holtmeyer.niklas.spotify.data.entity.dto.Artist;
-import de.holtmeyer.niklas.spotify.data.entity.dto.Track;
 import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
-import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.BasePlaylist;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
 import de.holtmeyer.niklas.spotify.data.entity.io.request.PlaylistDetailsRequestBody;
@@ -21,14 +19,11 @@ import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.ResponseMa
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.TrackMapper;
 import de.holtmeyer.niklas.spotify.endpoint.exception.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -50,15 +45,19 @@ public class DevController {
     final String USER_ID = "kngholdy";
 
     final Predicate<PlaylistsWithMinimalTrackInfo> filterGeneratedPlaylist = PlaylistFilter.descriptionNotContains("Generate-Date:");
+    final List<String> trio = List.of("kngholdy", "Kutay Gündogan", "Ali Emngl");;
 
-    @GetMapping("/dev/wombocombo")
-    public Object wombocombo(){
+    @GetMapping("/dev/loworbitioncannon")
+    public Object loworbitioncannon(){
         boolean shuffle = false;
-        List<String> trio = List.of("kngholdy", "Kutay Gündogan", "Ali Emngl");
         List<String> ignorePlaylistOwners = List.of("Spotify");
         Predicate<PlaylistsWithMinimalTrackInfo> playlistFilter = OwnerFilter.notInList(ignorePlaylistOwners).and(filterGeneratedPlaylist);
+        Predicate<PlaylistTrack> nonNull = Objects::nonNull;
+        Function<List<String>, Predicate<PlaylistTrack>> trackFilter = (trackBlacklist) -> nonNull
+                .and(UriFilter.notInList(trackBlacklist));
         String dst = "Low Orbit Ion Cannon";
         String playlist_dst_id = findPlayListByName(dst);
+        Function<PlaylistsWithMinimalTrackInfo, String> playlistMapper = PlaylistMapper::getOwnerID;
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
 
@@ -68,29 +67,12 @@ public class DevController {
             return Optional.empty();
         }
 
-        var userIDsOfPlaylistsCurrentUserFollows = playlistsCurrentUserFollows
-                .stream()
-                .filter(playlistFilter)
-                .map(PlaylistMapper::getOwner) //reference via BasePlaylist::getOwner does not work!
-                .map(HasHrefWithID::getId)
-                .distinct()
-                .toList();
-
-        var WUMBOPlayListIDs = userIDsOfPlaylistsCurrentUserFollows.stream()
-                .map(user_id -> this.playlistAPI.getUserPlaylists(user_id))
-                .map(ResponseMapper::asList)
-                .flatMap(Collection::stream)
-                .map(HasHrefWithID::getId)
-                .distinct()
-                .toList();
+        var userIDsOfPlaylistsCurrentUserFollows = this.playlistService.list.follows(playlistFilter, playlistMapper);
+        var WUMBOPlayListIDs = this.playlistService.list.playlistUsersFollows(userIDsOfPlaylistsCurrentUserFollows);
 
         var wombooo = this.currentAndPlaylistSongs();
 
-        var allSongUris = WUMBOPlayListIDs.parallelStream()
-                .map(this.playlistService.list::tracks)
-                .flatMap(Collection::stream)
-                .filter(Objects::nonNull)
-                .filter(UriFilter.notInList(wombooo))
+        var allSongUris = this.playlistService.list.list(WUMBOPlayListIDs, trackFilter.apply(wombooo))
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -116,7 +98,6 @@ public class DevController {
     @GetMapping("/dev/wombo2combo")
     public Object wombocombo2(){
         boolean shuffle = false;
-        List<String> trio = List.of("kngholdy", "Kutay Gündogan", "Ali Emngl");
         String dst = "Low Orbit Ion Cannon - Minus";
         String playlist_dst_id = findPlayListByName(dst);
         List<String> ignorePlaylistOwners = List.of("Spotify");
@@ -135,7 +116,6 @@ public class DevController {
         var userIDsOfPlaylistsCurrentUserFollows = this.playlistService.list.follows(playlistFilter, playlistMapper);
 
         var WUMBOPlayListIDs = this.playlistService.list.playlistUsersFollows(userIDsOfPlaylistsCurrentUserFollows);
-
 
         var wombooo = this.currentAndPlaylistSongs();
 
@@ -172,7 +152,7 @@ public class DevController {
 
     @GetMapping("/dev/all")
     public String t(){
-        wombocombo();
+        loworbitioncannon();
         wombocombo2();
         politik();
         return "all";

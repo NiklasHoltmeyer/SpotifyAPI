@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Access Spotify-Playlist Endpoints
@@ -72,7 +73,7 @@ public class PlaylistAPI {
 
     public List<? extends Response<? extends Snapshot>> removeTracks(String playlist_id, List<? extends HasHref> tracks){
         var url = PlaylistEndpoint.TRACKS_BY_ID.formatted(playlist_id);
-        var uriObjects = tracks.stream().map(HasHref::getUri).map(URI::new).toList();
+        var uriObjects = tracks.stream().filter(Objects::nonNull).map(HasHref::getUri).map(URI::new).toList();
 
         return ListUtil.batches(uriObjects, 100)
                 .map(TrackDeleteRequestBody::new)
