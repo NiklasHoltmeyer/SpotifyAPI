@@ -5,6 +5,7 @@ import de.holtmeyer.niklas.spotify.data.entity.dto.common.HasHrefWithID;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrack;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistTrackInfo;
 import de.holtmeyer.niklas.spotify.data.entity.dto.playlist.PlaylistsWithMinimalTrackInfo;
+import de.holtmeyer.niklas.spotify.data.service.spotify.stream.filter.ListFilter;
 import de.holtmeyer.niklas.spotify.data.service.spotify.stream.mapper.ResponseMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -88,6 +89,13 @@ public class PlaylistList {
      */
     public List<String> tracksUserFollows(Predicate<PlaylistsWithMinimalTrackInfo> playlistsFilter, Predicate<PlaylistTrack> trackFilter){
         return this.tracksUserFollows(playlistsFilter, trackFilter, true);
+    }
+
+    /**
+     * List all tracks of all playlists the current user is following.
+     */
+    public List<String> tracksUserFollows(Predicate<PlaylistsWithMinimalTrackInfo> playlistsFilter){
+        return this.tracksUserFollows(playlistsFilter, ListFilter::includeAll, true);
     }
 
     public Stream<String> playlistUserFollows(String userID){

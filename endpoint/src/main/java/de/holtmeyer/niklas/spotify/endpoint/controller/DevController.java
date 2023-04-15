@@ -264,18 +264,14 @@ public class DevController {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         System.out.println(timestamp + " " + c.size());
     }
-    List<String> currentAndPlaylistSongs(){
-        var excludePlaylists = List.of("Low Orbit Ion Cannon", "WUMBO", "Low Orbit Ion Cannon - Minus");
-
+    List<String> currentAndPlaylistSongs(){ //filterGeneratedPlaylist
         var savedTracks = this.trackService.list.saved(TrackMapper::getUri);
 
-        var playlistBlacklistFilter = PlaylistFilter.inList(excludePlaylists);
         var ownerFilter = OwnerFilter.ownerID(USER_ID);
 
-        var playlistFilter = playlistBlacklistFilter.and(ownerFilter);
-        Predicate<PlaylistTrack> trackFilter = ListFilter::includeAll;
+        var playlistFilter = filterGeneratedPlaylist.and(ownerFilter);
 
-        var playlistTracks = this.playlistService.list.tracksUserFollows(playlistFilter, trackFilter);
+        var playlistTracks = this.playlistService.list.tracksUserFollows(playlistFilter);
 
         return ListStream.flatten(savedTracks, playlistTracks).distinct().toList();
     }
