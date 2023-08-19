@@ -119,7 +119,6 @@ public class DevController {
 
         var wombooo = this.currentAndPlaylistSongs();
 
-
         var allSongUris = this.playlistService.list.list(WUMBOPlayListIDs, trackFilter.apply(wombooo))
                 .distinct()
                 .collect(Collectors.toList());
@@ -147,7 +146,11 @@ public class DevController {
         var dst = "non-biased Release Radar";
         var srcs = List.of("Discover Weekly", "Release Radar", "Deutschrap Brandneu", "Rap wieder echt");
 
-        return this.sortByPopularity(srcs, dst);
+        var tracksSortedByPopularity = this.sortByPopularity(srcs);
+//        this.sortByAge(tracksSortedByPopularity);
+
+
+        return overridePlaylist(dst, tracksSortedByPopularity);
     }
 
     @GetMapping("/dev/all")
@@ -170,14 +173,14 @@ public class DevController {
         return desc.getDescription();
     }
 
-    public String sortByPopularity(List<String> playlist_srcs, String playlist_dst){
+    public List<PlaylistTrack> sortByPopularity(List<String> playlist_srcs){
         var trackURIs = playlist_srcs.stream()
                 .map(this::findPlayListByName)
                 .map(this.playlistService.list::tracks)
                 .flatMap(Collection::stream)
                 .distinct()
                 .filter(Objects::nonNull)
-                .filter(filterByAge(14))
+                .filter(filterByAge(6))
                 .collect(Collectors.toList());
 
         // tracks.get(0).getAlbum().getRelease_date()
@@ -186,6 +189,7 @@ public class DevController {
         // comp erweitern um nach artists suchen?
         // ergebnise per hashmap cashen? :D
         sortByArtistPopularity(trackURIs);
+        return trackURIs;
 //        trackURIs.sort(Comparator.comparing(PlaylistTrack::getPopularity).reversed());
 
         //TODO Desc hinzufügen, damit klar ist welche map/filter angewendet
@@ -194,7 +198,12 @@ public class DevController {
         // -> filter: ignoiere Playlisten mit gen ... in disc
         //TODO Interface für Filter (mit Prio) und Filter ... Map ... // alles Chainable
         //Prio ->Popularity gem. anhand wie oft kommt der in meinen lieblingssongs v or
+    }
 
+    /**
+     * Drop-Create Playlist
+     */
+    private String overridePlaylist(String playlist_dst, List<PlaylistTrack> trackURIs) {
         var playlist_dst_id = findPlayListByName(playlist_dst);
 
         this.playlistService.deleteAllTracks(playlist_dst_id);
@@ -230,6 +239,11 @@ public class DevController {
                     .orElseThrow();
 
         tracks.sort(Comparator.comparing(calcPopularity).reversed());
+    }
+
+    public List<PlaylistTrack> sortByAge(List<PlaylistTrack> tracks){
+        tracks.sort(Comparator.comparing(TrackMapper::getReleaseDate).reversed());
+        return tracks;
     }
 
     private String findPlayListByName(String playlistname) {
