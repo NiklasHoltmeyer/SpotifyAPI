@@ -23,7 +23,8 @@ import java.util.Optional;
 
 /**
  * Spotify Authorization Code Flow:
- * https://developer.spotify.com/documentation/general/guides/authorization/code-flow/
+ * https://developer.spotify.
+ * /documentation/general/guides/authorization/code-flow/
  */
 @Service
 @AllArgsConstructor
